@@ -344,6 +344,21 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       return;
     }
 
+    if (message?.type === "RESET_SESSION") {
+      const snapshot = await getStorageSnapshot();
+      const resetState = {
+        ...snapshot.state,
+        earnedMinutes: 0,
+        unlocked: false,
+        currentSession: null
+      };
+      await chrome.storage.local.set({ state: resetState });
+      await refreshActiveContext();
+      await notifyAllTabsStateChanged();
+      sendResponse({ ok: true });
+      return;
+    }
+
     sendResponse({ ok: false });
   })();
 

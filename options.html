@@ -29,6 +29,28 @@
         </div>
       </section>
 
+      <section class="settings-section settings-insights">
+        <div class="settings-insights-grid">
+          <article class="insight-card">
+            <p class="insight-label">Configured Work Sites</p>
+            <p id="configured-sites-count" class="insight-value">0</p>
+          </article>
+          <article class="insight-card">
+            <p class="insight-label">Mode</p>
+            <p id="settings-mode-label" class="insight-value">Allowlist</p>
+          </article>
+          <article class="insight-card">
+            <p class="insight-label">Unlock Progress</p>
+            <p id="quota-preview" class="insight-value">0 / 30 min</p>
+          </article>
+        </div>
+
+        <div class="settings-utility-actions">
+          <button id="reset-session" type="button" class="secondary-btn">Reset Current Session</button>
+          <p id="session-feedback" class="save-feedback" aria-live="polite"></p>
+        </div>
+      </section>
+
       <footer class="settings-actions">
         <button id="save-settings" type="button">Save Settings</button>
         <p id="save-feedback" class="save-feedback" aria-live="polite"></p>

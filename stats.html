@@ -6,11 +6,27 @@
     <title>FocusUnlock Stats</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="page">
-    <main class="card wide">
-      <h1>Saved Focus Sessions</h1>
-      <p id="stats-status">Loading sessions...</p>
-      <ul id="sessions-list" class="sessions-list"></ul>
+  <body class="page stats-page">
+    <main class="card wide stats-shell">
+      <header class="stats-header">
+        <h1>Focus Time by Website</h1>
+        <p>Review how many focused minutes you have spent on each work site.</p>
+      </header>
+
+      <section class="stats-overview">
+        <article class="stats-tile">
+          <p class="stats-tile-label">Tracked Websites</p>
+          <p id="stats-total-sites" class="stats-tile-value">--</p>
+        </article>
+        <article class="stats-tile">
+          <p class="stats-tile-label">Focus Minutes</p>
+          <p id="stats-total-minutes" class="stats-tile-value">--</p>
+        </article>
+      </section>
+
+      <p id="stats-status" class="stats-status">Loading sessions...</p>
+
+      <ul id="sessions-list" class="sessions-list stats-list"></ul>
     </main>
     <script src="stats.js"></script>
   </body>
