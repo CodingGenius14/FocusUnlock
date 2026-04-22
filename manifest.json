@@ -29,7 +29,7 @@
         "content.js"
       ],
       "css": [
-        "styles.css"
+        "content.css"
       ],
       "run_at": "document_idle"
     }

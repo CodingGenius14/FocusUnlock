@@ -14,25 +14,19 @@ async function loadSettings() {
   const settings = response?.settings || {};
 
   const workSitesInput = document.getElementById("work-sites");
-  const distractionSitesInput = document.getElementById("distraction-sites");
   const quotaInput = document.getElementById("quota-minutes");
 
   if (workSitesInput) workSitesInput.value = formatSites(settings.workSites || []);
-  if (distractionSitesInput) {
-    distractionSitesInput.value = formatSites(settings.distractionSites || []);
-  }
   if (quotaInput) quotaInput.value = Number(settings.quotaMinutes || 30);
 }
 
 async function saveSettings() {
   const workSitesInput = document.getElementById("work-sites");
-  const distractionSitesInput = document.getElementById("distraction-sites");
   const quotaInput = document.getElementById("quota-minutes");
   const feedback = document.getElementById("save-feedback");
   const saveButton = document.getElementById("save-settings");
 
   const workSites = parseSites(workSitesInput?.value || "");
-  const distractionSites = parseSites(distractionSitesInput?.value || "");
   const quotaMinutes = Math.max(1, Number(quotaInput?.value || 30));
 
   if (saveButton) {
@@ -47,7 +41,7 @@ async function saveSettings() {
   try {
     await chrome.runtime.sendMessage({
       type: "SAVE_SETTINGS",
-      settings: { workSites, distractionSites, quotaMinutes }
+      settings: { workSites, quotaMinutes }
     });
 
     if (feedback) {

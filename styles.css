@@ -443,15 +443,7 @@ button:disabled {
 }
 
 .settings-page .settings-section:first-of-type {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.settings-page .settings-section:first-of-type .settings-row + .settings-row {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
+  display: block;
 }
 
 .settings-page .settings-shell textarea {

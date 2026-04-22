@@ -2,7 +2,6 @@ const TICK_ALARM_NAME = "focusunlock-minute-tick";
 const DEFAULTS = {
   settings: {
     workSites: ["github.com", "jira.com"],
-    distractionSites: ["youtube.com", "reddit.com"],
     quotaMinutes: 30
   },
   state: {
@@ -217,14 +216,14 @@ async function computeGateStatus(url) {
   const settings = snapshot.settings;
   const state = snapshot.state;
   const host = hostFromUrl(url);
-  const isDistraction = hostInList(host, settings.distractionSites);
+  const isWorkSite = hostInList(host, settings.workSites);
   const remainingMinutes = Math.max(
     0,
     Number(settings.quotaMinutes || 0) - Number(state.earnedMinutes || 0)
   );
   const unlocked = deriveUnlocked(state, settings);
   return {
-    shouldBlock: isDistraction && !unlocked && remainingMinutes > 0,
+    shouldBlock: Boolean(host) && !isWorkSite && !unlocked && remainingMinutes > 0,
     unlocked,
     remainingMinutes,
     earnedMinutes: Number(state.earnedMinutes || 0),
@@ -330,9 +329,6 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         workSites: Array.isArray(incoming.workSites)
           ? incoming.workSites.map(normalizeSite).filter(Boolean)
           : DEFAULTS.settings.workSites,
-        distractionSites: Array.isArray(incoming.distractionSites)
-          ? incoming.distractionSites.map(normalizeSite).filter(Boolean)
-          : DEFAULTS.settings.distractionSites,
         quotaMinutes: Math.max(1, Number(incoming.quotaMinutes || DEFAULTS.settings.quotaMinutes))
       };
       const snapshot = await getStorageSnapshot();

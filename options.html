@@ -10,27 +10,21 @@
     <main class="card wide settings-shell">
       <header class="settings-header">
         <h1>FocusUnlock Settings</h1>
-        <p>Configure which sites count as focused work and which sites stay locked until you earn your quota.</p>
+        <p>Configure the work-site allowlist. Every other website stays blocked until your focus quota is complete.</p>
       </header>
 
       <section class="settings-section">
         <div class="settings-row">
           <label for="work-sites">Work Sites</label>
-          <p class="field-help">One domain per line. Time on these sites counts toward your unlock quota.</p>
+          <p class="field-help">One domain per line. These are the only sites accessible before your timer is complete.</p>
           <textarea id="work-sites" rows="8" placeholder="github.com&#10;jira.com&#10;notion.so"></textarea>
-        </div>
-
-        <div class="settings-row">
-          <label for="distraction-sites">Distraction Sites</label>
-          <p class="field-help">One domain per line. These sites remain blocked until your quota is reached.</p>
-          <textarea id="distraction-sites" rows="8" placeholder="youtube.com&#10;reddit.com&#10;x.com"></textarea>
         </div>
       </section>
 
       <section class="settings-section">
         <div class="settings-row">
           <label for="quota-minutes">Focus Quota (minutes)</label>
-          <p class="field-help">How many focused minutes are required before distraction sites unlock.</p>
+          <p class="field-help">How many focused minutes are required before all other sites unlock.</p>
           <input id="quota-minutes" type="number" min="1" />
         </div>
       </section>
