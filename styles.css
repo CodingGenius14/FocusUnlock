@@ -10,6 +10,99 @@ body {
   background: #f7f8fa;
 }
 
+.popup-page {
+  min-width: 360px;
+  padding: 10px;
+  background: radial-gradient(circle at top left, #172640 0%, #0d1628 55%, #091120 100%);
+}
+
+.popup-shell {
+  border: 1px solid #29416d;
+  border-radius: 16px;
+  padding: 16px;
+  background: linear-gradient(165deg, #111d33 0%, #0d182b 60%, #0a1323 100%);
+  box-shadow: 0 12px 24px rgba(2, 7, 18, 0.55), inset 0 1px 0 rgba(137, 177, 255, 0.16);
+  color: #e7efff;
+}
+
+.popup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.popup-header h1 {
+  margin: 0;
+  color: #152a4d;
+  font-size: 30px;
+  letter-spacing: 0.2px;
+}
+
+.popup-subtitle {
+  margin: 4px 0 0;
+  color: #3e5e93;
+  font-size: 12px;
+}
+
+.popup-status {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.popup-metrics {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metric-card {
+  border: 1px solid #2f4a79;
+  border-radius: 12px;
+  padding: 10px;
+  background: linear-gradient(180deg, #1a2a46 0%, #15243f 100%);
+}
+
+.metric-label {
+  margin: 0;
+  color: #9bb2d9;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+}
+
+.metric-value {
+  margin: 6px 0 0;
+  color: #f0f6ff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.popup-progress {
+  margin-top: 14px;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #35548a;
+  margin-bottom: 7px;
+}
+
+.popup-progress-track {
+  margin-top: 0;
+  height: 10px;
+  background: #243754;
+}
+
+.popup-progress-fill {
+  background: linear-gradient(90deg, #4ec6ff 0%, #4af6c3 100%);
+  box-shadow: 0 0 12px rgba(78, 198, 255, 0.45);
+}
+
 .page {
   min-height: 100vh;
   background: linear-gradient(180deg, #f6f8fc 0%, #eef2f8 100%);
@@ -108,6 +201,30 @@ button:disabled {
 
 .popup-links a {
   text-decoration: none;
+}
+
+.popup-link-btn {
+  flex: 1;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid #3286ff;
+  background: linear-gradient(180deg, #1e80ff 0%, #1668d5 100%);
+  color: #f7fbff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.popup-link-btn.ghost {
+  border-color: #375788;
+  background: linear-gradient(180deg, #1a2d4a 0%, #16253e 100%);
+  color: #c8daf8;
+}
+
+.popup-link-btn:hover {
+  filter: brightness(1.05);
 }
 
 .sessions-list {
