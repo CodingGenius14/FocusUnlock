@@ -29,21 +29,43 @@ async function saveSettings() {
   const distractionSitesInput = document.getElementById("distraction-sites");
   const quotaInput = document.getElementById("quota-minutes");
   const feedback = document.getElementById("save-feedback");
+  const saveButton = document.getElementById("save-settings");
 
   const workSites = parseSites(workSitesInput?.value || "");
   const distractionSites = parseSites(distractionSitesInput?.value || "");
   const quotaMinutes = Math.max(1, Number(quotaInput?.value || 30));
 
-  await chrome.runtime.sendMessage({
-    type: "SAVE_SETTINGS",
-    settings: { workSites, distractionSites, quotaMinutes }
-  });
-
+  if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+  }
   if (feedback) {
-    feedback.textContent = "Saved.";
-    setTimeout(() => {
-      feedback.textContent = "";
-    }, 1200);
+    feedback.textContent = "";
+    feedback.classList.remove("error");
+  }
+
+  try {
+    await chrome.runtime.sendMessage({
+      type: "SAVE_SETTINGS",
+      settings: { workSites, distractionSites, quotaMinutes }
+    });
+
+    if (feedback) {
+      feedback.textContent = "Settings saved successfully.";
+      setTimeout(() => {
+        feedback.textContent = "";
+      }, 1800);
+    }
+  } catch (error) {
+    if (feedback) {
+      feedback.textContent = "Could not save settings. Try again.";
+      feedback.classList.add("error");
+    }
+  } finally {
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.textContent = "Save Settings";
+    }
   }
 }
 

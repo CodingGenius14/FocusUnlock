@@ -6,21 +6,39 @@
     <title>FocusUnlock Settings</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="page">
-    <main class="card wide">
-      <h1>FocusUnlock Settings</h1>
+  <body class="page settings-page">
+    <main class="card wide settings-shell">
+      <header class="settings-header">
+        <h1>FocusUnlock Settings</h1>
+        <p>Configure which sites count as focused work and which sites stay locked until you earn your quota.</p>
+      </header>
 
-      <label for="work-sites">Work sites (one domain per line)</label>
-      <textarea id="work-sites" rows="6" placeholder="github.com&#10;jira.com"></textarea>
+      <section class="settings-section">
+        <div class="settings-row">
+          <label for="work-sites">Work Sites</label>
+          <p class="field-help">One domain per line. Time on these sites counts toward your unlock quota.</p>
+          <textarea id="work-sites" rows="8" placeholder="github.com&#10;jira.com&#10;notion.so"></textarea>
+        </div>
 
-      <label for="distraction-sites">Distraction sites (one domain per line)</label>
-      <textarea id="distraction-sites" rows="6" placeholder="youtube.com&#10;reddit.com"></textarea>
+        <div class="settings-row">
+          <label for="distraction-sites">Distraction Sites</label>
+          <p class="field-help">One domain per line. These sites remain blocked until your quota is reached.</p>
+          <textarea id="distraction-sites" rows="8" placeholder="youtube.com&#10;reddit.com&#10;x.com"></textarea>
+        </div>
+      </section>
 
-      <label for="quota-minutes">Quota minutes required to unlock</label>
-      <input id="quota-minutes" type="number" min="1" />
+      <section class="settings-section">
+        <div class="settings-row">
+          <label for="quota-minutes">Focus Quota (minutes)</label>
+          <p class="field-help">How many focused minutes are required before distraction sites unlock.</p>
+          <input id="quota-minutes" type="number" min="1" />
+        </div>
+      </section>
 
-      <button id="save-settings" type="button">Save Settings</button>
-      <p id="save-feedback"></p>
+      <footer class="settings-actions">
+        <button id="save-settings" type="button">Save Settings</button>
+        <p id="save-feedback" class="save-feedback" aria-live="polite"></p>
+      </footer>
     </main>
     <script src="options.js"></script>
   </body>
