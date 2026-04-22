@@ -3,7 +3,8 @@ const DEFAULTS = {
   settings: {
     workSites: ["github.com", "jira.com"],
     quotaMinutes: 30,
-    allowAllWebsites: false
+    allowAllWebsites: false,
+    dailyGoalMinutes: 120
   },
   state: {
     earnedMinutes: 0,
@@ -11,7 +12,9 @@ const DEFAULTS = {
     activeWindowId: null,
     activeTabId: null,
     activeUrl: "",
-    currentSession: null
+    currentSession: null,
+    dailyFocusMinutes: 0,
+    dailyFocusDate: ""
   }
 };
 
@@ -42,6 +45,26 @@ function deriveUnlocked(state, settings) {
   return Boolean(state.unlocked) || Number(state.earnedMinutes || 0) >= Number(settings.quotaMinutes || 0);
 }
 
+function getTodayKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function ensureDailyBucket(state) {
+  const today = getTodayKey();
+  if (state.dailyFocusDate === today) {
+    return state;
+  }
+  return {
+    ...state,
+    dailyFocusMinutes: 0,
+    dailyFocusDate: today
+  };
+}
+
 async function getStorageSnapshot() {
   const data = await chrome.storage.local.get(["settings", "state"]);
   return {
@@ -52,9 +75,10 @@ async function getStorageSnapshot() {
 
 async function initializeStorage() {
   const snapshot = await getStorageSnapshot();
+  const state = ensureDailyBucket(snapshot.state);
   await chrome.storage.local.set({
     settings: snapshot.settings,
-    state: snapshot.state
+    state
   });
 }
 
@@ -187,7 +211,7 @@ async function refreshActiveContext() {
 async function tickFocusTimer() {
   const snapshot = await getStorageSnapshot();
   const settings = snapshot.settings;
-  let state = snapshot.state;
+  let state = ensureDailyBucket(snapshot.state);
   const host = hostFromUrl(state.activeUrl);
 
   if (settings.allowAllWebsites) {
@@ -206,6 +230,7 @@ async function tickFocusTimer() {
 
   const nextEarnedMinutes = Number(state.earnedMinutes || 0) + 1;
   const unlocked = nextEarnedMinutes >= Number(settings.quotaMinutes || 0);
+  const nextDailyFocusMinutes = Number(state.dailyFocusMinutes || 0) + 1;
   const currentSession = state.currentSession
     ? {
         ...state.currentSession,
@@ -221,7 +246,8 @@ async function tickFocusTimer() {
     ...state,
     earnedMinutes: nextEarnedMinutes,
     unlocked: unlocked || deriveUnlocked(state, settings),
-    currentSession
+    currentSession,
+    dailyFocusMinutes: nextDailyFocusMinutes
   };
 
   await chrome.storage.local.set({ state: nextState });
@@ -271,10 +297,11 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onStartup.addListener(async () => {
   const snapshot = await getStorageSnapshot();
+  const state = ensureDailyBucket(snapshot.state);
   await chrome.storage.local.set({
     settings: snapshot.settings,
     state: {
-      ...snapshot.state,
+      ...state,
       earnedMinutes: 0,
       unlocked: false,
       currentSession: null
@@ -342,17 +369,38 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
     if (message?.type === "SAVE_SETTINGS") {
       const incoming = message.settings || {};
+      const snapshot = await getStorageSnapshot();
+      const currentSettings = snapshot.settings;
       const nextSettings = {
-        workSites: Array.isArray(incoming.workSites)
+        workSites:
+          incoming.workSites === undefined
+            ? currentSettings.workSites
+            : Array.isArray(incoming.workSites)
           ? incoming.workSites.map(normalizeSite).filter(Boolean)
           : DEFAULTS.settings.workSites,
-        quotaMinutes: Math.max(1, Number(incoming.quotaMinutes || DEFAULTS.settings.quotaMinutes)),
-        allowAllWebsites: Boolean(incoming.allowAllWebsites)
+        quotaMinutes: Math.max(
+          1,
+          Number(
+            incoming.quotaMinutes ?? currentSettings.quotaMinutes ?? DEFAULTS.settings.quotaMinutes
+          )
+        ),
+        allowAllWebsites:
+          incoming.allowAllWebsites === undefined
+            ? Boolean(currentSettings.allowAllWebsites)
+            : Boolean(incoming.allowAllWebsites),
+        dailyGoalMinutes: Math.max(
+          1,
+          Number(
+            incoming.dailyGoalMinutes ??
+              currentSettings.dailyGoalMinutes ??
+              DEFAULTS.settings.dailyGoalMinutes
+          )
+        )
       };
-      const snapshot = await getStorageSnapshot();
+      const currentState = ensureDailyBucket(snapshot.state);
       let nextState = {
-        ...snapshot.state,
-        unlocked: deriveUnlocked(snapshot.state, nextSettings)
+        ...currentState,
+        unlocked: deriveUnlocked(currentState, nextSettings)
       };
 
       if (nextSettings.allowAllWebsites && nextState.currentSession) {
@@ -371,8 +419,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
     if (message?.type === "RESET_SESSION") {
       const snapshot = await getStorageSnapshot();
+      const state = ensureDailyBucket(snapshot.state);
       const resetState = {
-        ...snapshot.state,
+        ...state,
         earnedMinutes: 0,
         unlocked: false,
         currentSession: null

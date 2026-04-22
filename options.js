@@ -35,11 +35,13 @@ function updateInsights(workSites, quotaMinutes, allowAllWebsites) {
 function getCurrentFormSettings() {
   const workSitesInput = document.getElementById("work-sites");
   const quotaInput = document.getElementById("quota-minutes");
+  const dailyGoalInput = document.getElementById("daily-goal-minutes");
   const allowAllInput = document.getElementById("allow-all-websites");
   const workSites = parseSites(workSitesInput?.value || "");
   const quotaMinutes = Math.max(1, Number(quotaInput?.value || 30));
+  const dailyGoalMinutes = Math.max(1, Number(dailyGoalInput?.value || 120));
   const allowAllWebsites = Boolean(allowAllInput?.checked);
-  return { workSites, quotaMinutes, allowAllWebsites };
+  return { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites };
 }
 
 async function loadSettings() {
@@ -49,10 +51,12 @@ async function loadSettings() {
 
   const workSitesInput = document.getElementById("work-sites");
   const quotaInput = document.getElementById("quota-minutes");
+  const dailyGoalInput = document.getElementById("daily-goal-minutes");
   const allowAllInput = document.getElementById("allow-all-websites");
 
   if (workSitesInput) workSitesInput.value = formatSites(settings.workSites || []);
-  if (quotaInput) quotaInput.value = Number(settings.quotaMinutes || 30);
+  if (quotaInput) quotaInput.value = Number(settings.quotaMinutes ?? 30);
+  if (dailyGoalInput) dailyGoalInput.value = Number(settings.dailyGoalMinutes ?? 120);
   if (allowAllInput) allowAllInput.checked = Boolean(settings.allowAllWebsites);
 
   uiState.earnedMinutes = Number(state.earnedMinutes || 0);
@@ -68,7 +72,7 @@ async function saveSettings() {
   const feedback = document.getElementById("save-feedback");
   const saveButton = document.getElementById("save-settings");
 
-  const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+  const { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites } = getCurrentFormSettings();
 
   if (saveButton) {
     saveButton.disabled = true;
@@ -82,7 +86,7 @@ async function saveSettings() {
   try {
     await chrome.runtime.sendMessage({
       type: "SAVE_SETTINGS",
-      settings: { workSites, quotaMinutes, allowAllWebsites }
+      settings: { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites }
     });
     updateInsights(workSites, quotaMinutes, allowAllWebsites);
 
@@ -145,6 +149,10 @@ document.getElementById("work-sites")?.addEventListener("input", () => {
   updateInsights(workSites, quotaMinutes, allowAllWebsites);
 });
 document.getElementById("quota-minutes")?.addEventListener("input", () => {
+  const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+  updateInsights(workSites, quotaMinutes, allowAllWebsites);
+});
+document.getElementById("daily-goal-minutes")?.addEventListener("input", () => {
   const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
   updateInsights(workSites, quotaMinutes, allowAllWebsites);
 });
