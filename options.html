@@ -70,6 +70,42 @@
         </div>
       </section>
 
+      <section class="settings-section settings-advanced">
+        <h2 class="settings-subheading">Focus Configuration Intelligence</h2>
+        <div class="settings-analytics-grid">
+          <article class="settings-analytics-card">
+            <p class="insight-label">Daily Pace Needed</p>
+            <p id="daily-pace-needed" class="insight-value">--</p>
+          </article>
+          <article class="settings-analytics-card">
+            <p class="insight-label">Sessions to Goal</p>
+            <p id="sessions-to-goal" class="insight-value">--</p>
+          </article>
+        </div>
+
+        <div class="settings-ratio-panel">
+          <div class="settings-ratio-top">
+            <span>Daily Goal to Quota Ratio</span>
+            <span id="ratio-text">--</span>
+          </div>
+          <div class="settings-ratio-track">
+            <div id="ratio-fill" class="settings-ratio-fill"></div>
+          </div>
+        </div>
+
+        <ul id="settings-recommendations" class="settings-recommendations"></ul>
+      </section>
+
+      <section class="settings-section settings-presets">
+        <h2 class="settings-subheading">Focus Presets</h2>
+        <p class="field-help">Apply a profile instantly, then save if you want to keep it.</p>
+        <div class="settings-preset-grid">
+          <button type="button" class="secondary-btn preset-btn" data-preset="deep">Deep Work</button>
+          <button type="button" class="secondary-btn preset-btn" data-preset="balanced">Balanced</button>
+          <button type="button" class="secondary-btn preset-btn" data-preset="light">Light</button>
+        </div>
+      </section>
+
       <footer class="settings-actions">
         <button id="save-settings" type="button">Save Settings</button>
         <p id="save-feedback" class="save-feedback" aria-live="polite"></p>

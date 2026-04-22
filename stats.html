@@ -57,6 +57,24 @@
           <div id="analytics-trend-chart" class="analytics-chart trend"></div>
         </article>
 
+        <article class="stats-panel analytics-panel">
+          <h2>Hourly Focus Heatmap</h2>
+          <p class="stats-panel-subtitle">Which hours of the day are most productive.</p>
+          <div id="analytics-hourly-heatmap" class="analytics-chart"></div>
+        </article>
+
+        <article class="stats-panel analytics-panel">
+          <h2>Weekday Performance</h2>
+          <p class="stats-panel-subtitle">Focused minutes by weekday.</p>
+          <div id="analytics-weekday-performance" class="analytics-chart"></div>
+        </article>
+
+        <article class="stats-panel analytics-panel wide">
+          <h2>Session Length Distribution</h2>
+          <p class="stats-panel-subtitle">How your completed sessions are distributed by length.</p>
+          <div id="analytics-session-length" class="analytics-chart"></div>
+        </article>
+
         <article class="stats-panel analytics-panel wide">
           <h2>Useful Insights</h2>
           <div id="analytics-insights" class="analytics-insights-grid"></div>
@@ -64,20 +82,6 @@
       </section>
 
       <p id="stats-status" class="stats-status">Loading sessions...</p>
-
-      <section class="stats-breakdown-grid">
-        <article class="stats-panel">
-          <h2>Time by Category</h2>
-          <p class="stats-panel-subtitle">Total focus minutes grouped by activity type.</p>
-          <ul id="category-list" class="stats-category-list"></ul>
-        </article>
-
-        <article class="stats-panel">
-          <h2>Time on Individual Websites</h2>
-          <p class="stats-panel-subtitle">Per-site totals ranked by highest focus time.</p>
-          <ul id="sessions-list" class="sessions-list stats-list"></ul>
-        </article>
-      </section>
     </main>
     <script src="stats.js"></script>
   </body>

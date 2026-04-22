@@ -11,7 +11,8 @@ function formatSites(sites) {
 
 const uiState = {
   earnedMinutes: 0,
-  unlocked: false
+  unlocked: false,
+  dailyFocusMinutes: 0
 };
 
 function updateInsights(workSites, quotaMinutes, allowAllWebsites) {
@@ -19,6 +20,13 @@ function updateInsights(workSites, quotaMinutes, allowAllWebsites) {
   const modeElement = document.getElementById("settings-mode-label");
   const quotaPreview = document.getElementById("quota-preview");
   const toggleStatus = document.getElementById("allow-all-status");
+  const dailyGoalInput = document.getElementById("daily-goal-minutes");
+  const dailyPaceNeeded = document.getElementById("daily-pace-needed");
+  const sessionsToGoal = document.getElementById("sessions-to-goal");
+  const ratioText = document.getElementById("ratio-text");
+  const ratioFill = document.getElementById("ratio-fill");
+  const recommendations = document.getElementById("settings-recommendations");
+  const dailyGoalMinutes = Math.max(1, Number(dailyGoalInput?.value || 120));
 
   if (countElement) countElement.textContent = String(workSites.length);
   if (modeElement) {
@@ -29,6 +37,39 @@ function updateInsights(workSites, quotaMinutes, allowAllWebsites) {
   }
   if (toggleStatus) {
     toggleStatus.textContent = allowAllWebsites ? "On" : "Off";
+  }
+
+  const dailyRemaining = Math.max(0, dailyGoalMinutes - uiState.dailyFocusMinutes);
+  if (dailyPaceNeeded) dailyPaceNeeded.textContent = `${dailyRemaining} min left today`;
+
+  const sessionsNeeded = Math.max(1, Math.ceil(dailyGoalMinutes / Math.max(1, quotaMinutes)));
+  if (sessionsToGoal) sessionsToGoal.textContent = `${sessionsNeeded} session(s)`;
+
+  const ratioPercent = Math.min(100, Math.round((quotaMinutes / dailyGoalMinutes) * 100));
+  if (ratioText) ratioText.textContent = `${quotaMinutes}:${dailyGoalMinutes}`;
+  if (ratioFill) ratioFill.style.width = `${ratioPercent}%`;
+
+  if (recommendations) {
+    const tips = [];
+    if (allowAllWebsites) {
+      tips.push("Turn off Allow All Websites to resume enforcement and accurate tracking.");
+    }
+    if (workSites.length < 2) {
+      tips.push("Add at least two work sites so focused time can be earned from multiple workflows.");
+    }
+    if (quotaMinutes < 20) {
+      tips.push("Consider increasing quota above 20 minutes to reduce impulse site switching.");
+    }
+    if (dailyGoalMinutes > 240) {
+      tips.push("Daily goal is high; split into planned blocks to avoid burnout.");
+    }
+    if (sessionsNeeded >= 6) {
+      tips.push("Current setup requires many sessions; raise quota or lower daily goal for sustainability.");
+    }
+    if (!tips.length) {
+      tips.push("Configuration looks healthy. Keep this profile and review weekly performance trends.");
+    }
+    recommendations.innerHTML = tips.map((tip) => `<li>${tip}</li>`).join("");
   }
 }
 
@@ -61,6 +102,7 @@ async function loadSettings() {
 
   uiState.earnedMinutes = Number(state.earnedMinutes || 0);
   uiState.unlocked = Boolean(state.unlocked);
+  uiState.dailyFocusMinutes = Number(state.dailyFocusMinutes || 0);
   updateInsights(
     parseSites(workSitesInput?.value || ""),
     Number(quotaInput?.value || 30),
@@ -126,6 +168,7 @@ async function resetSession() {
     await chrome.runtime.sendMessage({ type: "RESET_SESSION" });
     uiState.earnedMinutes = 0;
     uiState.unlocked = false;
+    uiState.dailyFocusMinutes = 0;
     const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
     updateInsights(workSites, quotaMinutes, allowAllWebsites);
     if (feedback) feedback.textContent = "Session reset.";
@@ -159,5 +202,34 @@ document.getElementById("daily-goal-minutes")?.addEventListener("input", () => {
 document.getElementById("allow-all-websites")?.addEventListener("change", () => {
   const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
   updateInsights(workSites, quotaMinutes, allowAllWebsites);
+});
+document.querySelectorAll(".preset-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    const preset = button.getAttribute("data-preset");
+    const quotaInput = document.getElementById("quota-minutes");
+    const dailyGoalInput = document.getElementById("daily-goal-minutes");
+    const allowAllInput = document.getElementById("allow-all-websites");
+
+    if (preset === "deep") {
+      if (quotaInput) quotaInput.value = "45";
+      if (dailyGoalInput) dailyGoalInput.value = "180";
+      if (allowAllInput) allowAllInput.checked = false;
+    } else if (preset === "balanced") {
+      if (quotaInput) quotaInput.value = "30";
+      if (dailyGoalInput) dailyGoalInput.value = "120";
+      if (allowAllInput) allowAllInput.checked = false;
+    } else if (preset === "light") {
+      if (quotaInput) quotaInput.value = "15";
+      if (dailyGoalInput) dailyGoalInput.value = "60";
+      if (allowAllInput) allowAllInput.checked = false;
+    }
+
+    const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+    updateInsights(workSites, quotaMinutes, allowAllWebsites);
+    const saveFeedback = document.getElementById("save-feedback");
+    if (saveFeedback) {
+      saveFeedback.textContent = "Preset applied. Click Save Settings to keep it.";
+    }
+  });
 });
 loadSettings();

@@ -91,6 +91,115 @@ function renderDistributionChart(target, items, totalTenths, accentClass, emptyL
   target.innerHTML = rows;
 }
 
+function renderHourlyHeatmap(target, sessions) {
+  if (!target) return;
+  if (!sessions.length) {
+    target.innerHTML = `<div class="analytics-empty">No hourly data yet.</div>`;
+    return;
+  }
+
+  const hourTotals = Array.from({ length: 24 }, () => 0);
+  sessions.forEach((session) => {
+    const date = new Date(session.timestamp);
+    if (Number.isNaN(date.getTime())) return;
+    hourTotals[date.getHours()] += toTenths(session.duration_minutes);
+  });
+
+  const max = Math.max(...hourTotals, 1);
+  const cells = hourTotals
+    .map((value, hour) => {
+      const intensity = value <= 0 ? 0 : Math.max(0.15, value / max);
+      return `
+        <div class="heatmap-cell" style="--heat:${intensity}">
+          <span class="heatmap-hour">${String(hour).padStart(2, "0")}:00</span>
+          <span class="heatmap-value">${formatTenths(value)}m</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  target.innerHTML = `<div class="heatmap-grid">${cells}</div>`;
+}
+
+function renderWeekdayPerformance(target, sessions) {
+  if (!target) return;
+  if (!sessions.length) {
+    target.innerHTML = `<div class="analytics-empty">No weekday data yet.</div>`;
+    return;
+  }
+
+  const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const totals = Array.from({ length: 7 }, () => 0);
+  sessions.forEach((session) => {
+    const date = new Date(session.timestamp);
+    if (Number.isNaN(date.getTime())) return;
+    totals[date.getDay()] += toTenths(session.duration_minutes);
+  });
+  const max = Math.max(...totals, 1);
+
+  const rows = labels
+    .map((label, idx) => {
+      const value = totals[idx];
+      const percent = Math.round((value / max) * 100);
+      return `
+        <div class="analytics-row compact">
+          <div class="analytics-row-top">
+            <span class="analytics-name">${label}</span>
+            <span class="analytics-value">${formatTenths(value)} min</span>
+          </div>
+          <div class="analytics-bar-track">
+            <div class="analytics-bar-fill category" style="width:${percent}%;"></div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  target.innerHTML = rows;
+}
+
+function renderSessionLengthDistribution(target, sessions) {
+  if (!target) return;
+  if (!sessions.length) {
+    target.innerHTML = `<div class="analytics-empty">No session length data yet.</div>`;
+    return;
+  }
+
+  const buckets = [
+    { label: "< 5 min", count: 0, min: 0, max: 5 },
+    { label: "5-15 min", count: 0, min: 5, max: 15 },
+    { label: "15-30 min", count: 0, min: 15, max: 30 },
+    { label: "30-60 min", count: 0, min: 30, max: 60 },
+    { label: "60+ min", count: 0, min: 60, max: Infinity }
+  ];
+
+  sessions.forEach((session) => {
+    const minutes = Number(session.duration_minutes || 0);
+    const bucket = buckets.find((b) => minutes >= b.min && minutes < b.max);
+    if (bucket) bucket.count += 1;
+  });
+
+  const max = Math.max(...buckets.map((b) => b.count), 1);
+  const rows = buckets
+    .map((bucket) => {
+      const percent = Math.round((bucket.count / max) * 100);
+      return `
+        <div class="analytics-row compact">
+          <div class="analytics-row-top">
+            <span class="analytics-name">${bucket.label}</span>
+            <span class="analytics-value">${bucket.count} session(s)</span>
+          </div>
+          <div class="analytics-bar-track">
+            <div class="analytics-bar-fill site" style="width:${percent}%;"></div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  target.innerHTML = rows;
+}
+
 function renderTrendChart(target, sessions, range) {
   if (!target) return;
   const days = [];
@@ -252,21 +361,23 @@ function getCategoryForSite(site) {
 
 function renderRange() {
   const status = document.getElementById("stats-status");
-  const list = document.getElementById("sessions-list");
-  const categoryList = document.getElementById("category-list");
   const websiteChart = document.getElementById("analytics-website-chart");
   const categoryChart = document.getElementById("analytics-category-chart");
   const trendChart = document.getElementById("analytics-trend-chart");
+  const hourlyHeatmap = document.getElementById("analytics-hourly-heatmap");
+  const weekdayPerformance = document.getElementById("analytics-weekday-performance");
+  const sessionLength = document.getElementById("analytics-session-length");
   const insightsList = document.getElementById("analytics-insights");
   const totalSites = document.getElementById("stats-total-sites");
   const completedSessions = document.getElementById("stats-completed-sessions");
   const trackedTotalMinutes = document.getElementById("stats-tracked-total-minutes");
   if (
-    !list ||
-    !categoryList ||
     !websiteChart ||
     !categoryChart ||
     !trendChart ||
+    !hourlyHeatmap ||
+    !weekdayPerformance ||
+    !sessionLength ||
     !insightsList ||
     !status ||
     !totalSites ||
@@ -277,11 +388,12 @@ function renderRange() {
   }
 
   const sessions = filterSessionsByRange(allSessionsCache, activeRange);
-  list.innerHTML = "";
-  categoryList.innerHTML = "";
   websiteChart.innerHTML = "";
   categoryChart.innerHTML = "";
   trendChart.innerHTML = "";
+  hourlyHeatmap.innerHTML = "";
+  weekdayPerformance.innerHTML = "";
+  sessionLength.innerHTML = "";
   insightsList.innerHTML = "";
   totalSites.textContent = "--";
   completedSessions.textContent = "--";
@@ -293,11 +405,12 @@ function renderRange() {
     trackedTotalMinutes.textContent = "0";
     status.textContent = `No focus time saved for ${getRangeLabel(activeRange)}.`;
     status.className = "stats-status warning";
-    categoryList.innerHTML = '<li class="stats-category-empty">No category data yet.</li>';
-    list.innerHTML = '<li class="stats-category-empty">No website data yet.</li>';
     renderDistributionChart(websiteChart, [], 0, "site", "No website chart data yet.");
     renderDistributionChart(categoryChart, [], 0, "category", "No category chart data yet.");
     renderTrendChart(trendChart, [], activeRange);
+    renderHourlyHeatmap(hourlyHeatmap, []);
+    renderWeekdayPerformance(weekdayPerformance, []);
+    renderSessionLengthDistribution(sessionLength, []);
     renderInsights(insightsList, [], [], []);
     return;
   }
@@ -341,39 +454,11 @@ function renderRange() {
       "No category chart data yet."
     );
   renderTrendChart(trendChart, sessions, activeRange);
+  renderHourlyHeatmap(hourlyHeatmap, sessions);
+  renderWeekdayPerformance(weekdayPerformance, sessions);
+  renderSessionLengthDistribution(sessionLength, sessions);
   renderInsights(insightsList, sessions, sites, categories);
 
-  categories.forEach((categorySummary) => {
-    const percent = percentFromTotal(categorySummary.tenths, totalTrackedTenths);
-    const item = document.createElement("li");
-    item.className = "stats-category-item";
-    item.innerHTML = `
-        <div class="stats-item-top">
-          <span class="stats-category-name">${categorySummary.label}</span>
-          <span class="stats-category-time">${formatTenths(categorySummary.tenths)} min (${percent}%)</span>
-        </div>
-        <div class="stats-item-bar-track">
-          <div class="stats-item-bar-fill" style="width: ${percent}%;"></div>
-        </div>
-    `;
-    categoryList.appendChild(item);
-  });
-
-  sites.forEach((siteSummary) => {
-    const percent = percentFromTotal(siteSummary.tenths, totalTrackedTenths);
-    const item = document.createElement("li");
-    item.className = "stats-session-item";
-    item.innerHTML = `
-        <div class="stats-item-top">
-          <p class="session-site">${siteSummary.label}</p>
-          <p class="session-duration">${formatTenths(siteSummary.tenths)} min (${percent}%)</p>
-        </div>
-        <div class="stats-item-bar-track">
-          <div class="stats-item-bar-fill site" style="width: ${percent}%;"></div>
-        </div>
-    `;
-    list.appendChild(item);
-  });
 }
 
 async function loadSessions() {
