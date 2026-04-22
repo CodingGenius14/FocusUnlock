@@ -2,7 +2,8 @@ const TICK_ALARM_NAME = "focusunlock-minute-tick";
 const DEFAULTS = {
   settings: {
     workSites: ["github.com", "jira.com"],
-    quotaMinutes: 30
+    quotaMinutes: 30,
+    allowAllWebsites: false
   },
   state: {
     earnedMinutes: 0,
@@ -142,6 +143,15 @@ async function updateActiveContextFromTab(tab) {
   const settings = snapshot.settings;
   let state = { ...snapshot.state, ...patch };
 
+  if (settings.allowAllWebsites) {
+    if (state.currentSession) {
+      state = await finalizeCurrentSession(state, Date.now());
+    }
+    await chrome.storage.local.set({ state });
+    await notifyAllTabsStateChanged();
+    return;
+  }
+
   if (hostInList(host, settings.workSites)) {
     state = await maybeStartSession(state, host, Date.now());
   } else if (state.currentSession) {
@@ -179,6 +189,13 @@ async function tickFocusTimer() {
   const settings = snapshot.settings;
   let state = snapshot.state;
   const host = hostFromUrl(state.activeUrl);
+
+  if (settings.allowAllWebsites) {
+    if (state.currentSession) {
+      await finalizeCurrentSession(state, Date.now());
+    }
+    return;
+  }
 
   if (!host || !hostInList(host, settings.workSites)) {
     if (state.currentSession) {
@@ -223,7 +240,7 @@ async function computeGateStatus(url) {
   );
   const unlocked = deriveUnlocked(state, settings);
   return {
-    shouldBlock: Boolean(host) && !isWorkSite && !unlocked && remainingMinutes > 0,
+    shouldBlock: !settings.allowAllWebsites && Boolean(host) && !isWorkSite && !unlocked && remainingMinutes > 0,
     unlocked,
     remainingMinutes,
     earnedMinutes: Number(state.earnedMinutes || 0),
@@ -329,16 +346,24 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         workSites: Array.isArray(incoming.workSites)
           ? incoming.workSites.map(normalizeSite).filter(Boolean)
           : DEFAULTS.settings.workSites,
-        quotaMinutes: Math.max(1, Number(incoming.quotaMinutes || DEFAULTS.settings.quotaMinutes))
+        quotaMinutes: Math.max(1, Number(incoming.quotaMinutes || DEFAULTS.settings.quotaMinutes)),
+        allowAllWebsites: Boolean(incoming.allowAllWebsites)
       };
       const snapshot = await getStorageSnapshot();
+      let nextState = {
+        ...snapshot.state,
+        unlocked: deriveUnlocked(snapshot.state, nextSettings)
+      };
+
+      if (nextSettings.allowAllWebsites && nextState.currentSession) {
+        nextState = await finalizeCurrentSession(nextState, Date.now());
+      }
+
       await chrome.storage.local.set({
         settings: nextSettings,
-        state: {
-          ...snapshot.state,
-          unlocked: deriveUnlocked(snapshot.state, nextSettings)
-        }
+        state: nextState
       });
+      await refreshActiveContext();
       await notifyAllTabsStateChanged();
       sendResponse({ ok: true, settings: nextSettings });
       return;

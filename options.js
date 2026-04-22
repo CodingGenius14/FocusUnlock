@@ -14,24 +14,32 @@ const uiState = {
   unlocked: false
 };
 
-function updateInsights(workSites, quotaMinutes) {
+function updateInsights(workSites, quotaMinutes, allowAllWebsites) {
   const countElement = document.getElementById("configured-sites-count");
   const modeElement = document.getElementById("settings-mode-label");
   const quotaPreview = document.getElementById("quota-preview");
+  const toggleStatus = document.getElementById("allow-all-status");
 
   if (countElement) countElement.textContent = String(workSites.length);
-  if (modeElement) modeElement.textContent = uiState.unlocked ? "Unlocked" : "Allowlist";
+  if (modeElement) {
+    modeElement.textContent = allowAllWebsites ? "Allow All (On)" : "Focus Mode (Off)";
+  }
   if (quotaPreview) {
     quotaPreview.textContent = `${uiState.earnedMinutes} / ${quotaMinutes} min`;
+  }
+  if (toggleStatus) {
+    toggleStatus.textContent = allowAllWebsites ? "On" : "Off";
   }
 }
 
 function getCurrentFormSettings() {
   const workSitesInput = document.getElementById("work-sites");
   const quotaInput = document.getElementById("quota-minutes");
+  const allowAllInput = document.getElementById("allow-all-websites");
   const workSites = parseSites(workSitesInput?.value || "");
   const quotaMinutes = Math.max(1, Number(quotaInput?.value || 30));
-  return { workSites, quotaMinutes };
+  const allowAllWebsites = Boolean(allowAllInput?.checked);
+  return { workSites, quotaMinutes, allowAllWebsites };
 }
 
 async function loadSettings() {
@@ -41,20 +49,26 @@ async function loadSettings() {
 
   const workSitesInput = document.getElementById("work-sites");
   const quotaInput = document.getElementById("quota-minutes");
+  const allowAllInput = document.getElementById("allow-all-websites");
 
   if (workSitesInput) workSitesInput.value = formatSites(settings.workSites || []);
   if (quotaInput) quotaInput.value = Number(settings.quotaMinutes || 30);
+  if (allowAllInput) allowAllInput.checked = Boolean(settings.allowAllWebsites);
 
   uiState.earnedMinutes = Number(state.earnedMinutes || 0);
   uiState.unlocked = Boolean(state.unlocked);
-  updateInsights(parseSites(workSitesInput?.value || ""), Number(quotaInput?.value || 30));
+  updateInsights(
+    parseSites(workSitesInput?.value || ""),
+    Number(quotaInput?.value || 30),
+    Boolean(allowAllInput?.checked)
+  );
 }
 
 async function saveSettings() {
   const feedback = document.getElementById("save-feedback");
   const saveButton = document.getElementById("save-settings");
 
-  const { workSites, quotaMinutes } = getCurrentFormSettings();
+  const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
 
   if (saveButton) {
     saveButton.disabled = true;
@@ -68,9 +82,9 @@ async function saveSettings() {
   try {
     await chrome.runtime.sendMessage({
       type: "SAVE_SETTINGS",
-      settings: { workSites, quotaMinutes }
+      settings: { workSites, quotaMinutes, allowAllWebsites }
     });
-    updateInsights(workSites, quotaMinutes);
+    updateInsights(workSites, quotaMinutes, allowAllWebsites);
 
     if (feedback) {
       feedback.textContent = "Settings saved successfully.";
@@ -108,8 +122,8 @@ async function resetSession() {
     await chrome.runtime.sendMessage({ type: "RESET_SESSION" });
     uiState.earnedMinutes = 0;
     uiState.unlocked = false;
-    const { workSites, quotaMinutes } = getCurrentFormSettings();
-    updateInsights(workSites, quotaMinutes);
+    const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+    updateInsights(workSites, quotaMinutes, allowAllWebsites);
     if (feedback) feedback.textContent = "Session reset.";
   } catch (error) {
     if (feedback) {
@@ -127,11 +141,15 @@ async function resetSession() {
 document.getElementById("save-settings")?.addEventListener("click", saveSettings);
 document.getElementById("reset-session")?.addEventListener("click", resetSession);
 document.getElementById("work-sites")?.addEventListener("input", () => {
-  const { workSites, quotaMinutes } = getCurrentFormSettings();
-  updateInsights(workSites, quotaMinutes);
+  const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+  updateInsights(workSites, quotaMinutes, allowAllWebsites);
 });
 document.getElementById("quota-minutes")?.addEventListener("input", () => {
-  const { workSites, quotaMinutes } = getCurrentFormSettings();
-  updateInsights(workSites, quotaMinutes);
+  const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+  updateInsights(workSites, quotaMinutes, allowAllWebsites);
+});
+document.getElementById("allow-all-websites")?.addEventListener("change", () => {
+  const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
+  updateInsights(workSites, quotaMinutes, allowAllWebsites);
 });
 loadSettings();
