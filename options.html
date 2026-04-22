@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FocusUnlock Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page">
+    <main class="card wide">
+      <h1>FocusUnlock Settings</h1>
+
+      <label for="work-sites">Work sites (one domain per line)</label>
+      <textarea id="work-sites" rows="6" placeholder="github.com&#10;jira.com"></textarea>
+
+      <label for="distraction-sites">Distraction sites (one domain per line)</label>
+      <textarea id="distraction-sites" rows="6" placeholder="youtube.com&#10;reddit.com"></textarea>
+
+      <label for="quota-minutes">Quota minutes required to unlock</label>
+      <input id="quota-minutes" type="number" min="1" />
+
+      <button id="save-settings" type="button">Save Settings</button>
+      <p id="save-feedback"></p>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
