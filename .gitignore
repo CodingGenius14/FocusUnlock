@@ -6,6 +6,7 @@ __pycache__/
 
 backend/sessions.db
 backend/__pycache__/
+backend/.env
 
 .DS_Store
 Thumbs.db

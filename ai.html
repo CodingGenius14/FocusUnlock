@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Assistance</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page ai-page">
+    <main class="card wide ai-shell">
+      <header class="ai-header">
+        <h1>AI Assistance</h1>
+        <p>Describe your goals and generate recommended work sites plus a time plan.</p>
+      </header>
+
+      <section class="ai-section">
+        <label for="goal-input">What are your goals?</label>
+        <textarea
+          id="goal-input"
+          rows="5"
+          placeholder="Example: I need to finish two assignment writeups, review linear algebra, and do interview prep this week."
+        ></textarea>
+        <div class="ai-actions">
+          <button id="generate-ai" type="button">Generate AI Plan</button>
+          <span id="ai-status" class="ai-status" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <section class="ai-section">
+        <div class="ai-section-head">
+          <h2>Recommended Work Sites</h2>
+          <button id="apply-selected" type="button" class="secondary-btn">Apply Selected to Settings</button>
+        </div>
+        <div id="site-recommendations" class="ai-site-list"></div>
+      </section>
+
+      <section class="ai-section">
+        <h2>Suggested Time Plan</h2>
+        <div id="time-plan" class="ai-plan-list"></div>
+      </section>
+
+      <section class="ai-section">
+        <h2>Focus Strategy</h2>
+        <ul id="focus-plan" class="ai-tip-list"></ul>
+      </section>
+    </main>
+    <script src="ai.js"></script>
+  </body>
+</html>

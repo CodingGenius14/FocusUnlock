@@ -219,7 +219,7 @@ document.querySelectorAll(".preset-btn").forEach((button) => {
       if (dailyGoalInput) dailyGoalInput.value = "120";
       if (allowAllInput) allowAllInput.checked = false;
     } else if (preset === "light") {
-      if (quotaInput) quotaInput.value = "15";
+      if (quotaInput) quotaInput.value = "20";
       if (dailyGoalInput) dailyGoalInput.value = "60";
       if (allowAllInput) allowAllInput.checked = false;
     }
