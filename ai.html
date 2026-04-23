@@ -6,42 +6,61 @@
     <title>AI Assistance</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="page ai-page">
-    <main class="card wide ai-shell">
-      <header class="ai-header">
-        <h1>AI Assistance</h1>
-        <p>Describe your goals and generate recommended work sites plus a time plan.</p>
-      </header>
-
-      <section class="ai-section">
-        <label for="goal-input">What are your goals?</label>
-        <textarea
-          id="goal-input"
-          rows="5"
-          placeholder="Example: I need to finish two assignment writeups, review linear algebra, and do interview prep this week."
-        ></textarea>
-        <div class="ai-actions">
-          <button id="generate-ai" type="button">Generate AI Plan</button>
-          <span id="ai-status" class="ai-status" aria-live="polite"></span>
+  <body class="page ai-page control-page">
+    <main class="control-shell">
+      <aside class="control-sidebar">
+        <div class="brand-block">
+          <p class="brand-title">FOCUS_CORE</p>
+          <p class="brand-subtitle">v2.0.4 · ACTIVE</p>
         </div>
-      </section>
+        <nav class="control-nav" aria-label="Control Center">
+          <a href="options.html" class="nav-item">Settings</a>
+          <a href="ai.html" class="nav-item active">AI Assistance</a>
+          <a href="stats.html" class="nav-item">Stats</a>
+        </nav>
+      </aside>
 
-      <section class="ai-section">
-        <div class="ai-section-head">
-          <h2>Recommended Work Sites</h2>
-          <button id="apply-selected" type="button" class="secondary-btn">Apply Selected to Settings</button>
+      <section class="control-main">
+        <header class="control-topbar">
+          <p class="section-kicker">COGNITIVE_ASSIST</p>
+          <h1>AI Assistance</h1>
+          <p class="field-help">Generate a recommended work-site plan and apply it directly to your settings.</p>
+        </header>
+
+        <div class="control-grid two-col">
+          <section class="ai-section">
+            <label for="goal-input">Mission Goal</label>
+            <textarea
+              id="goal-input"
+              rows="6"
+              placeholder="Example: Finish assignment writeups, review linear algebra, and complete interview prep this week."
+            ></textarea>
+            <div class="ai-actions">
+              <button id="generate-ai" type="button">Generate AI Plan</button>
+              <span id="ai-status" class="ai-status" aria-live="polite"></span>
+            </div>
+          </section>
+
+          <section class="ai-section">
+            <div class="ai-section-head">
+              <h2>Recommended Work Sites</h2>
+              <button id="apply-selected" type="button" class="secondary-btn">Apply Selected</button>
+            </div>
+            <div id="site-recommendations" class="ai-site-list"></div>
+          </section>
         </div>
-        <div id="site-recommendations" class="ai-site-list"></div>
-      </section>
 
-      <section class="ai-section">
-        <h2>Suggested Time Plan</h2>
-        <div id="time-plan" class="ai-plan-list"></div>
-      </section>
+        <div class="control-grid two-col ai-bottom-grid">
+          <section class="ai-section">
+            <h2>Suggested Time Plan</h2>
+            <div id="time-plan" class="ai-plan-list"></div>
+          </section>
 
-      <section class="ai-section">
-        <h2>Focus Strategy</h2>
-        <ul id="focus-plan" class="ai-tip-list"></ul>
+          <section class="ai-section">
+            <h2>Focus Strategy</h2>
+            <ul id="focus-plan" class="ai-tip-list"></ul>
+          </section>
+        </div>
       </section>
     </main>
     <script src="ai.js"></script>

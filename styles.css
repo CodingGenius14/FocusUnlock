@@ -2646,5 +2646,1317 @@ button:disabled {
   justify-content: center;
   text-decoration: none;
   margin-top: 12px;
-  max-width: 220px;
+  min-width: 220px;
+  width: fit-content;
+  padding: 11px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(124, 186, 255, 0.75);
+  background: linear-gradient(180deg, rgba(54, 134, 255, 0.95) 0%, rgba(37, 98, 226, 0.95) 100%);
+  color: #f4f9ff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow:
+    0 8px 20px rgba(22, 72, 186, 0.35),
+    0 0 0 1px rgba(198, 227, 255, 0.2) inset;
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
 }
+
+.settings-page .settings-ai-link:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 24px rgba(22, 72, 186, 0.42),
+    0 0 0 1px rgba(210, 233, 255, 0.24) inset;
+}
+
+.settings-page .settings-ai-link:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+/* Unified Control Center layout for Settings, AI, Stats */
+.control-page {
+  min-height: 100vh;
+  margin: 0;
+  padding: 16px;
+  background:
+    radial-gradient(1100px 700px at -5% -10%, rgba(66, 117, 231, 0.25) 0%, rgba(66, 117, 231, 0) 55%),
+    radial-gradient(900px 560px at 120% -10%, rgba(95, 233, 206, 0.16) 0%, rgba(95, 233, 206, 0) 50%),
+    linear-gradient(165deg, #070e1c 0%, #0b1324 50%, #090f1d 100%);
+  color: #d7e5ff;
+}
+
+.control-shell {
+  max-width: 1320px;
+  min-height: calc(100vh - 32px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.control-sidebar {
+  border: 1px solid rgba(92, 129, 189, 0.42);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(11, 19, 35, 0.96) 0%, rgba(9, 15, 29, 0.96) 100%);
+  box-shadow: 0 14px 34px rgba(2, 7, 18, 0.58);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-block {
+  margin-bottom: 18px;
+}
+
+.brand-title {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #8dc2ff;
+}
+
+.brand-subtitle {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #89a5cf;
+  letter-spacing: 0.08em;
+}
+
+.control-nav {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #abc2e8;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 9px 10px;
+}
+
+.nav-item:hover {
+  background: rgba(44, 66, 107, 0.58);
+  border-color: rgba(88, 124, 182, 0.45);
+}
+
+.nav-item.active {
+  color: #f0f7ff;
+  background: linear-gradient(180deg, rgba(57, 106, 196, 0.7) 0%, rgba(42, 82, 163, 0.75) 100%);
+  border-color: rgba(111, 169, 255, 0.72);
+}
+
+.go-deep-btn {
+  margin-top: auto;
+  width: 100%;
+  border: 1px solid rgba(111, 173, 255, 0.9);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #3999ff 0%, #256ee3 100%);
+  color: #eef7ff;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 11px 12px;
+}
+
+.control-sidebar .save-feedback {
+  margin-top: 10px;
+}
+
+.control-main {
+  border: 1px solid rgba(88, 126, 189, 0.42);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(11, 20, 36, 0.96) 0%, rgba(9, 16, 30, 0.96) 100%);
+  box-shadow: 0 16px 36px rgba(2, 8, 20, 0.6);
+  padding: 18px;
+}
+
+.control-topbar {
+  margin-bottom: 14px;
+}
+
+.section-kicker {
+  margin: 0;
+  color: #8daed9;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.control-topbar h1 {
+  margin: 6px 0 0;
+  font-size: 27px;
+  color: #f2f8ff;
+  letter-spacing: -0.01em;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(290px, 1fr);
+  gap: 14px;
+}
+
+.control-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-page .settings-section,
+.ai-page .ai-section,
+.stats-page .stats-panel,
+.stats-page .stats-tile,
+.stats-page .stats-range-filter,
+.stats-page .stats-status {
+  border-radius: 14px;
+  border: 1px solid rgba(110, 145, 203, 0.35);
+  background: linear-gradient(180deg, rgba(17, 30, 51, 0.9) 0%, rgba(13, 24, 42, 0.9) 100%);
+  box-shadow: inset 0 0 0 1px rgba(140, 177, 235, 0.08);
+}
+
+.settings-page .settings-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.settings-page .insight-card {
+  margin: 0;
+}
+
+.settings-page .insight-label,
+.stats-page .stats-tile-label {
+  color: #a7c0e8;
+}
+
+.settings-page .insight-value,
+.stats-page .stats-tile-value {
+  color: #f4f9ff;
+}
+
+.section-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.field-chip {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #b8d3ff;
+  border: 1px solid rgba(130, 163, 219, 0.55);
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.settings-page #work-sites {
+  min-height: 250px;
+  resize: vertical;
+}
+
+.settings-page .section-controls .settings-row + .settings-row {
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.settings-page .section-controls input {
+  width: 100%;
+  max-width: none;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.engine-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #c8dcff;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.settings-page .settings-ratio-track {
+  margin-bottom: 12px;
+}
+
+.settings-page .settings-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.settings-page .settings-analytics-card {
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.settings-page .settings-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.settings-page .preset-btn {
+  width: 100%;
+  min-height: 46px;
+}
+
+.stats-page .stats-overview {
+  gap: 10px;
+}
+
+.stats-page .stats-analytics-grid {
+  gap: 10px;
+}
+
+.ai-page .ai-section {
+  margin-top: 0;
+}
+
+.ai-page .ai-actions button,
+.ai-page .ai-actions .secondary-btn {
+  width: auto;
+}
+
+.ai-page #generate-ai {
+  margin-top: 0;
+  min-width: 190px;
+}
+
+.ai-page .ai-actions {
+  flex-wrap: wrap;
+}
+
+.ai-page .ai-section-head .secondary-btn {
+  min-width: 230px;
+}
+
+@media (max-width: 1080px) {
+  .control-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .control-sidebar {
+    padding: 12px;
+  }
+
+  .go-deep-btn {
+    margin-top: 12px;
+  }
+
+  .control-grid,
+  .control-grid.two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-page .settings-analytics-grid,
+  .settings-page .settings-preset-grid,
+  .settings-page .settings-insights-grid,
+  .stats-page .stats-overview {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Final unified control-center theme (authoritative override) */
+.control-page {
+  min-height: 100vh;
+  margin: 0;
+  padding: 14px;
+  background:
+    radial-gradient(1000px 620px at -5% -10%, rgba(57, 126, 255, 0.24) 0%, rgba(57, 126, 255, 0) 55%),
+    radial-gradient(860px 540px at 115% -10%, rgba(79, 237, 214, 0.16) 0%, rgba(79, 237, 214, 0) 52%),
+    linear-gradient(165deg, #070e1a 0%, #0a1220 48%, #080f1b 100%);
+  color: #dce9ff;
+}
+
+.control-page .control-shell {
+  max-width: 1360px;
+  min-height: calc(100vh - 28px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.control-page .control-sidebar,
+.control-page .control-main {
+  border-radius: 16px;
+  border: 1px solid rgba(108, 149, 216, 0.38);
+  background: linear-gradient(180deg, rgba(13, 23, 40, 0.96) 0%, rgba(10, 18, 33, 0.96) 100%);
+  box-shadow: 0 14px 34px rgba(3, 9, 22, 0.58);
+}
+
+.control-page .control-sidebar {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.control-page .brand-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #8bc1ff;
+}
+
+.control-page .brand-subtitle {
+  margin: 3px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #89a8d3;
+}
+
+.control-page .control-nav {
+  margin-top: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.control-page .nav-item {
+  text-decoration: none;
+  color: #aec7eb;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 9px 10px;
+  font-weight: 600;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.control-page .nav-item:hover {
+  border-color: rgba(108, 150, 216, 0.42);
+  background: rgba(35, 56, 91, 0.65);
+}
+
+.control-page .nav-item.active {
+  color: #f5f9ff;
+  border-color: rgba(116, 181, 255, 0.72);
+  background: linear-gradient(180deg, rgba(66, 122, 224, 0.75) 0%, rgba(47, 91, 186, 0.78) 100%);
+}
+
+.control-page .go-deep-btn {
+  width: 100%;
+  margin-top: auto;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(115, 179, 255, 0.85);
+  background: linear-gradient(180deg, #3a99ff 0%, #266fe4 100%);
+  color: #eef7ff;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.control-page .control-main {
+  padding: 18px;
+}
+
+.control-page .control-topbar h1 {
+  margin: 6px 0 0;
+  color: #f4f8ff;
+  font-size: 30px;
+  letter-spacing: -0.01em;
+}
+
+.control-page .section-kicker {
+  margin: 0;
+  color: #8fb1e0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.control-page .control-topbar .field-help,
+.control-page .control-topbar p {
+  margin: 8px 0 0;
+  color: #a2b7d7;
+}
+
+.control-page .settings-section,
+.control-page .ai-section,
+.control-page .stats-range-filter,
+.control-page .stats-tile,
+.control-page .stats-panel,
+.control-page .stats-status {
+  border-radius: 14px;
+  border: 1px solid rgba(117, 153, 207, 0.33);
+  background: linear-gradient(180deg, rgba(18, 32, 54, 0.9) 0%, rgba(13, 24, 41, 0.9) 100%);
+  box-shadow: inset 0 0 0 1px rgba(143, 183, 240, 0.08);
+}
+
+.control-page .control-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.control-page .control-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.control-page .settings-section,
+.control-page .ai-section {
+  margin-top: 0;
+  padding: 14px;
+}
+
+.control-page .settings-insights {
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.control-page .settings-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.control-page .insight-card,
+.control-page .settings-analytics-card,
+.control-page .settings-recommendations li,
+.control-page .analytics-row,
+.control-page .analytics-empty {
+  border: 1px solid rgba(124, 158, 211, 0.3);
+  background: rgba(15, 26, 43, 0.78);
+}
+
+.control-page .insight-card {
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.control-page .insight-label,
+.control-page .stats-tile-label {
+  margin: 0;
+  color: #a9c2e8;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.control-page .insight-value,
+.control-page .stats-tile-value {
+  margin: 6px 0 0;
+  color: #f4f9ff;
+  font-size: 28px;
+}
+
+.control-page textarea,
+.control-page input {
+  width: 100%;
+  border: 1px solid rgba(122, 149, 191, 0.44);
+  background: rgba(8, 15, 29, 0.86);
+  color: #edf4ff;
+}
+
+.control-page textarea::placeholder,
+.control-page input::placeholder {
+  color: #84a1c8;
+}
+
+.control-page textarea:focus,
+.control-page input:focus {
+  outline: none;
+  border-color: #79b0ff;
+  box-shadow: 0 0 0 3px rgba(84, 139, 236, 0.25);
+}
+
+.control-page button {
+  width: auto;
+}
+
+.control-page .secondary-btn {
+  border: 1px solid rgba(123, 151, 193, 0.52);
+  background: rgba(29, 46, 72, 0.9);
+  color: #dce9ff;
+}
+
+.control-page .full-width {
+  width: 100%;
+}
+
+.control-page .field-chip {
+  color: #c2d7f5;
+  border-color: rgba(130, 165, 220, 0.5);
+  background: rgba(26, 43, 68, 0.75);
+}
+
+.control-page .section-head-row {
+  margin-bottom: 8px;
+}
+
+.control-page #work-sites {
+  min-height: 250px;
+}
+
+.control-page .settings-row + .settings-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(136, 160, 196, 0.2);
+}
+
+.control-page .toggle-status {
+  color: #cde0ff;
+}
+
+.control-page .settings-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.control-page .settings-ratio-track {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  background: rgba(46, 64, 98, 0.56);
+}
+
+.control-page .settings-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.control-page .settings-ai-link {
+  width: 100%;
+  min-width: 0;
+  text-decoration: none;
+  justify-content: center;
+}
+
+.control-page .save-feedback {
+  color: #98ffd8;
+}
+
+.control-page .save-feedback.error {
+  color: #ffb0bc;
+}
+
+.control-page .ai-actions {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.control-page .ai-status {
+  color: #98ffd8;
+}
+
+.control-page .ai-status.error {
+  color: #ffb0bc;
+}
+
+.control-page .ai-site-item,
+.control-page .ai-plan-item,
+.control-page .ai-tip-list li {
+  border: 1px solid rgba(122, 151, 194, 0.3);
+  background: rgba(16, 27, 44, 0.84);
+}
+
+.control-page .stats-overview {
+  margin-top: 12px;
+}
+
+.control-page .stats-status {
+  margin: 12px 0 0;
+}
+
+.control-page .stats-analytics-grid {
+  margin-top: 12px;
+  gap: 10px;
+}
+
+.control-page .stats-range-filter {
+  margin-top: 12px;
+  padding: 10px 12px;
+}
+
+.control-page .stats-range-btn {
+  border: 1px solid rgba(121, 149, 192, 0.45);
+  background: rgba(28, 43, 67, 0.92);
+  color: #d5e6ff;
+  margin-top: 0;
+}
+
+.control-page .stats-range-btn.active {
+  border-color: rgba(117, 185, 255, 0.82);
+  background: linear-gradient(180deg, #3a89f6 0%, #2a68e6 100%);
+  color: #f7fbff;
+}
+
+@media (max-width: 1080px) {
+  .control-page .control-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .control-page .go-deep-btn {
+    margin-top: 12px;
+  }
+
+  .control-page .control-grid,
+  .control-page .control-grid.two-col,
+  .control-page .settings-insights-grid,
+  .control-page .settings-analytics-grid,
+  .control-page .settings-preset-grid,
+  .control-page .stats-overview {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Settings alignment pass */
+.control-page .section-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.control-page label {
+  margin-top: 0;
+}
+
+.control-page button {
+  margin-top: 0;
+}
+
+.control-page .secondary-btn,
+.control-page .go-deep-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-page .save-feedback {
+  min-height: 18px;
+}
+
+.control-page.settings-page .control-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.control-page.settings-page .settings-insights,
+.control-page.settings-page .control-grid,
+.control-page.settings-page .settings-advanced,
+.control-page.settings-page .settings-presets {
+  margin-top: 0;
+}
+
+.control-page.settings-page .control-grid {
+  align-items: stretch;
+}
+
+.control-page.settings-page .control-grid > .settings-section {
+  height: 100%;
+}
+
+.control-page.settings-page .section-controls {
+  display: grid;
+  align-content: start;
+}
+
+.control-page.settings-page .section-controls .settings-row {
+  display: grid;
+  gap: 8px;
+}
+
+.control-page.settings-page .section-controls .toggle-row {
+  justify-content: space-between;
+}
+
+.control-page.settings-page .settings-analytics-grid {
+  align-items: stretch;
+}
+
+.control-page.settings-page .settings-analytics-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 110px;
+}
+
+/* Overflow/overlap guard for settings lower panels */
+.control-page.settings-page .settings-advanced,
+.control-page.settings-page .settings-presets {
+  width: 100%;
+  overflow: hidden;
+}
+
+.control-page.settings-page .settings-advanced > *,
+.control-page.settings-page .settings-presets > * {
+  min-width: 0;
+}
+
+.control-page.settings-page .settings-analytics-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.control-page.settings-page .settings-analytics-card {
+  min-width: 0;
+}
+
+.control-page.settings-page .settings-analytics-card .insight-value,
+.control-page.settings-page .settings-recommendations li,
+.control-page.settings-page #ratio-text {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.control-page.settings-page .settings-ai-link {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.control-page.settings-page .settings-preset-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+/* Hard fix: keep Focus Configuration Intelligence fully contained */
+.control-page.settings-page .settings-advanced {
+  position: relative;
+  margin-top: 26px !important;
+  overflow: hidden;
+  isolation: isolate;
+  contain: layout paint;
+}
+
+.control-page.settings-page .settings-advanced .settings-analytics-grid {
+  align-items: stretch;
+}
+
+.control-page.settings-page .settings-advanced .settings-analytics-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.control-page.settings-page .settings-advanced .settings-analytics-card > * {
+  min-width: 0;
+}
+
+/* Hard fix: Open AI Assistance button must not overflow card */
+.control-page.settings-page .settings-advanced .settings-ai-link {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0 !important;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.control-page.settings-page .settings-presets {
+  position: relative;
+  margin-top: 16px !important;
+  isolation: isolate;
+  contain: layout paint;
+}
+
+/* Extra containment: prevent right-edge spill in settings cards */
+.control-page.settings-page .control-main {
+  overflow-x: hidden;
+}
+
+.control-page.settings-page .settings-section,
+.control-page.settings-page .settings-advanced,
+.control-page.settings-page .settings-presets {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.control-page.settings-page .settings-advanced .settings-analytics-grid,
+.control-page.settings-page .settings-presets .settings-preset-grid {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Color retheme only (layout unchanged) */
+.control-page {
+  background:
+    radial-gradient(1100px 700px at -8% -14%, rgba(53, 116, 255, 0.2) 0%, rgba(53, 116, 255, 0) 55%),
+    radial-gradient(900px 560px at 118% -10%, rgba(33, 209, 255, 0.14) 0%, rgba(33, 209, 255, 0) 52%),
+    linear-gradient(165deg, #050a15 0%, #091022 46%, #070d1b 100%);
+  color: #d8e6ff;
+}
+
+.control-page .control-sidebar,
+.control-page .control-main {
+  border-color: rgba(64, 104, 171, 0.5);
+  background: linear-gradient(180deg, rgba(8, 16, 33, 0.98) 0%, rgba(8, 14, 28, 0.98) 100%);
+  box-shadow: 0 14px 34px rgba(2, 8, 20, 0.66);
+}
+
+.control-page .brand-title {
+  color: #7cb5ff;
+}
+
+.control-page .brand-subtitle {
+  color: #7e95bd;
+}
+
+.control-page .nav-item {
+  color: #91a8ce;
+}
+
+.control-page .nav-item:hover {
+  border-color: rgba(82, 122, 190, 0.52);
+  background: rgba(24, 42, 73, 0.72);
+}
+
+.control-page .nav-item.active {
+  color: #eaf4ff;
+  border-color: rgba(104, 171, 255, 0.82);
+  background: linear-gradient(180deg, rgba(40, 84, 170, 0.82) 0%, rgba(30, 64, 137, 0.84) 100%);
+}
+
+.control-page .go-deep-btn {
+  border-color: rgba(96, 194, 255, 0.95);
+  background: linear-gradient(180deg, #2f89ff 0%, #1eb4e8 100%);
+  color: #eef8ff;
+  box-shadow: 0 8px 20px rgba(39, 125, 236, 0.38);
+}
+
+.control-page .section-kicker {
+  color: #5f8ed8;
+}
+
+.control-page .control-topbar h1 {
+  color: #e9f3ff;
+}
+
+.control-page .control-topbar .field-help,
+.control-page .control-topbar p {
+  color: #95aacd;
+}
+
+.control-page .settings-section,
+.control-page .ai-section,
+.control-page .stats-range-filter,
+.control-page .stats-tile,
+.control-page .stats-panel,
+.control-page .stats-status {
+  border-color: rgba(64, 101, 158, 0.44);
+  background: linear-gradient(180deg, rgba(10, 21, 42, 0.94) 0%, rgba(9, 18, 36, 0.94) 100%);
+  box-shadow: inset 0 0 0 1px rgba(106, 146, 214, 0.1);
+}
+
+.control-page .insight-card,
+.control-page .settings-analytics-card,
+.control-page .settings-recommendations li,
+.control-page .analytics-row,
+.control-page .analytics-empty,
+.control-page .ai-site-item,
+.control-page .ai-plan-item,
+.control-page .ai-tip-list li {
+  border-color: rgba(70, 108, 166, 0.42);
+  background: rgba(11, 22, 44, 0.88);
+}
+
+.control-page .insight-label,
+.control-page .stats-tile-label {
+  color: #8ea7cd;
+}
+
+.control-page .insight-value,
+.control-page .stats-tile-value {
+  color: #f0f6ff;
+}
+
+.control-page textarea,
+.control-page input {
+  border-color: rgba(78, 116, 179, 0.56);
+  background: rgba(4, 12, 26, 0.9);
+  color: #e8f2ff;
+}
+
+.control-page textarea::placeholder,
+.control-page input::placeholder {
+  color: #6f89b2;
+}
+
+.control-page textarea:focus,
+.control-page input:focus {
+  border-color: #58b5ff;
+  box-shadow: 0 0 0 3px rgba(69, 158, 243, 0.28);
+}
+
+.control-page .secondary-btn {
+  border-color: rgba(87, 126, 191, 0.6);
+  background: rgba(25, 45, 76, 0.92);
+  color: #dbe8fb;
+}
+
+.control-page .secondary-btn:hover {
+  background: rgba(31, 54, 89, 0.95);
+}
+
+.control-page .field-chip {
+  color: #afcdf8;
+  border-color: rgba(95, 146, 222, 0.6);
+  background: rgba(18, 36, 65, 0.82);
+}
+
+.control-page .toggle-status,
+.control-page .save-feedback {
+  color: #8eead7;
+}
+
+.control-page .save-feedback.error,
+.control-page .ai-status.error {
+  color: #ffafba;
+}
+
+.control-page .stats-range-btn {
+  border-color: rgba(85, 125, 188, 0.5);
+  background: rgba(24, 41, 70, 0.94);
+  color: #cedef8;
+}
+
+.control-page .stats-range-btn.active {
+  border-color: rgba(99, 191, 255, 0.9);
+  background: linear-gradient(180deg, #2c82f1 0%, #2466df 100%);
+  color: #f7fbff;
+}
+
+/* Button polish pass */
+.control-page button,
+.control-page .secondary-btn,
+.control-page .stats-range-btn,
+.control-page .settings-ai-link {
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition:
+    transform 130ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    filter 160ms ease;
+}
+
+.control-page button:hover,
+.control-page .secondary-btn:hover,
+.control-page .stats-range-btn:hover,
+.control-page .settings-ai-link:hover {
+  transform: translateY(-1px);
+}
+
+.control-page button:active,
+.control-page .secondary-btn:active,
+.control-page .stats-range-btn:active,
+.control-page .settings-ai-link:active {
+  transform: translateY(0);
+}
+
+.control-page button:focus-visible,
+.control-page .secondary-btn:focus-visible,
+.control-page .stats-range-btn:focus-visible,
+.control-page .settings-ai-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(86, 177, 255, 0.28);
+}
+
+.control-page button:disabled,
+.control-page .secondary-btn:disabled,
+.control-page .stats-range-btn:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  transform: none;
+  filter: saturate(0.75);
+}
+
+.control-page .go-deep-btn {
+  background: linear-gradient(180deg, #3ea1ff 0%, #2b82f2 52%, #26d3dd 100%);
+  border: 1px solid rgba(111, 214, 255, 0.92);
+  color: #f1f9ff;
+  box-shadow:
+    0 10px 22px rgba(28, 131, 236, 0.36),
+    inset 0 1px 0 rgba(210, 240, 255, 0.28);
+}
+
+.control-page .go-deep-btn:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    0 14px 26px rgba(30, 141, 245, 0.42),
+    inset 0 1px 0 rgba(225, 245, 255, 0.3);
+}
+
+.control-page .secondary-btn,
+.control-page .settings-ai-link {
+  border: 1px solid rgba(97, 136, 204, 0.64);
+  background: linear-gradient(180deg, rgba(31, 51, 82, 0.96) 0%, rgba(24, 41, 67, 0.96) 100%);
+  color: #dceafb;
+  box-shadow:
+    0 6px 14px rgba(7, 16, 33, 0.3),
+    inset 0 1px 0 rgba(170, 201, 245, 0.14);
+}
+
+.control-page .secondary-btn:hover,
+.control-page .settings-ai-link:hover {
+  border-color: rgba(120, 167, 239, 0.74);
+  background: linear-gradient(180deg, rgba(37, 60, 95, 0.97) 0%, rgba(28, 48, 78, 0.97) 100%);
+  color: #ecf4ff;
+}
+
+.control-page .stats-range-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(90, 130, 194, 0.56);
+  background: linear-gradient(180deg, rgba(25, 43, 72, 0.94) 0%, rgba(20, 35, 59, 0.95) 100%);
+  color: #cfe0fb;
+  box-shadow: inset 0 1px 0 rgba(171, 203, 248, 0.12);
+}
+
+.control-page .stats-range-btn.active {
+  border-color: rgba(118, 208, 255, 0.9);
+  background: linear-gradient(180deg, #2f88f4 0%, #255fd9 100%);
+  box-shadow:
+    0 8px 16px rgba(34, 102, 226, 0.34),
+    inset 0 1px 0 rgba(213, 236, 255, 0.2);
+}
+
+/* Example-inspired accent button for reset action */
+.control-page #reset-session {
+  border: 1px solid rgba(185, 112, 112, 0.5);
+  background: linear-gradient(180deg, rgba(30, 25, 42, 0.95) 0%, rgba(23, 20, 34, 0.95) 100%);
+  color: #f2b3a8;
+  box-shadow:
+    0 8px 18px rgba(8, 8, 16, 0.38),
+    inset 0 1px 0 rgba(255, 198, 186, 0.08);
+}
+
+.control-page #reset-session:hover {
+  border-color: rgba(223, 145, 136, 0.74);
+  background: linear-gradient(180deg, rgba(40, 30, 52, 0.96) 0%, rgba(31, 24, 44, 0.96) 100%);
+  color: #ffd2c9;
+}
+
+/* Global button visual system (all pages) */
+button,
+.popup-link-btn,
+.settings-ai-link {
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition:
+    transform 130ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    filter 160ms ease;
+}
+
+button:hover,
+.popup-link-btn:hover,
+.settings-ai-link:hover {
+  transform: translateY(-1px);
+}
+
+button:active,
+.popup-link-btn:active,
+.settings-ai-link:active {
+  transform: translateY(0);
+}
+
+button:focus-visible,
+.popup-link-btn:focus-visible,
+.settings-ai-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(95, 180, 255, 0.28);
+}
+
+button:disabled,
+.popup-link-btn:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  transform: none;
+  filter: saturate(0.75);
+}
+
+/* Primary buttons */
+button:not(.secondary-btn):not(.stats-range-btn):not(#reset-session),
+.popup-link-btn:not(.ghost) {
+  border: 1px solid rgba(104, 204, 255, 0.9);
+  background: linear-gradient(180deg, #3b9cff 0%, #2d7af1 52%, #25c9df 100%);
+  color: #eef8ff;
+  box-shadow:
+    0 10px 22px rgba(27, 120, 221, 0.36),
+    inset 0 1px 0 rgba(209, 238, 255, 0.28);
+}
+
+button:not(.secondary-btn):not(.stats-range-btn):not(#reset-session):hover,
+.popup-link-btn:not(.ghost):hover {
+  filter: brightness(1.07);
+  box-shadow:
+    0 14px 26px rgba(31, 132, 232, 0.44),
+    inset 0 1px 0 rgba(225, 245, 255, 0.32);
+}
+
+/* Secondary / neutral buttons */
+.secondary-btn,
+.popup-link-btn.ghost {
+  border: 1px solid rgba(95, 134, 201, 0.62);
+  background: linear-gradient(180deg, rgba(34, 54, 86, 0.96) 0%, rgba(25, 42, 69, 0.96) 100%);
+  color: #dceafb;
+  box-shadow:
+    0 6px 14px rgba(6, 15, 32, 0.28),
+    inset 0 1px 0 rgba(170, 201, 245, 0.15);
+}
+
+.secondary-btn:hover,
+.popup-link-btn.ghost:hover {
+  border-color: rgba(123, 168, 236, 0.75);
+  background: linear-gradient(180deg, rgba(39, 62, 98, 0.97) 0%, rgba(29, 49, 79, 0.97) 100%);
+  color: #edf4ff;
+}
+
+/* Danger-action button */
+#reset-session {
+  border: 1px solid rgba(188, 113, 113, 0.55);
+  background: linear-gradient(180deg, rgba(30, 25, 42, 0.95) 0%, rgba(23, 20, 34, 0.95) 100%);
+  color: #f2b4a9;
+  box-shadow:
+    0 8px 18px rgba(8, 8, 16, 0.38),
+    inset 0 1px 0 rgba(255, 198, 186, 0.08);
+}
+
+#reset-session:hover {
+  border-color: rgba(223, 145, 136, 0.78);
+  background: linear-gradient(180deg, rgba(40, 30, 52, 0.97) 0%, rgba(31, 24, 44, 0.97) 100%);
+  color: #ffd2c9;
+}
+
+/* Pill range buttons */
+.stats-range-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(86, 127, 194, 0.58);
+  background: linear-gradient(180deg, rgba(26, 44, 73, 0.94) 0%, rgba(20, 35, 59, 0.95) 100%);
+  color: #cfdffa;
+  box-shadow: inset 0 1px 0 rgba(170, 203, 248, 0.12);
+}
+
+.stats-range-btn.active {
+  border-color: rgba(114, 206, 255, 0.92);
+  background: linear-gradient(180deg, #2f88f4 0%, #255fd9 100%);
+  color: #f7fbff;
+  box-shadow:
+    0 8px 16px rgba(34, 102, 226, 0.34),
+    inset 0 1px 0 rgba(213, 236, 255, 0.2);
+}
+
+/* Forceful button refresh (high specificity) */
+.control-page.settings-page .go-deep-btn,
+.control-page.settings-page #save-settings {
+  background: linear-gradient(180deg, #47a7ff 0%, #2f7df2 50%, #24d2df 100%) !important;
+  border: 1px solid rgba(126, 222, 255, 0.95) !important;
+  color: #f4fbff !important;
+  box-shadow:
+    0 14px 28px rgba(26, 125, 231, 0.45),
+    inset 0 1px 0 rgba(224, 246, 255, 0.32) !important;
+}
+
+.control-page.settings-page .preset-btn,
+.control-page.settings-page .settings-ai-link,
+.control-page.settings-page .secondary-btn:not(#reset-session) {
+  background: linear-gradient(180deg, rgba(45, 73, 116, 0.98) 0%, rgba(30, 52, 86, 0.98) 100%) !important;
+  border: 1px solid rgba(125, 171, 241, 0.78) !important;
+  color: #e8f3ff !important;
+  box-shadow:
+    0 10px 18px rgba(6, 18, 37, 0.36),
+    inset 0 1px 0 rgba(182, 212, 255, 0.2) !important;
+}
+
+.control-page.settings-page .preset-btn:hover,
+.control-page.settings-page .settings-ai-link:hover,
+.control-page.settings-page .secondary-btn:not(#reset-session):hover {
+  background: linear-gradient(180deg, rgba(56, 88, 136, 0.99) 0%, rgba(38, 64, 105, 0.99) 100%) !important;
+  border-color: rgba(157, 201, 255, 0.9) !important;
+  color: #f3f9ff !important;
+  box-shadow:
+    0 14px 24px rgba(12, 31, 61, 0.44),
+    inset 0 1px 0 rgba(205, 230, 255, 0.26) !important;
+}
+
+.control-page.settings-page #reset-session {
+  background: linear-gradient(180deg, rgba(47, 33, 47, 0.97) 0%, rgba(34, 24, 38, 0.97) 100%) !important;
+  border: 1px solid rgba(223, 144, 141, 0.72) !important;
+  color: #ffc8bf !important;
+  box-shadow:
+    0 10px 20px rgba(12, 10, 18, 0.42),
+    inset 0 1px 0 rgba(255, 213, 203, 0.14) !important;
+}
+
+.control-page.settings-page #reset-session:hover {
+  background: linear-gradient(180deg, rgba(62, 41, 61, 0.98) 0%, rgba(46, 32, 49, 0.98) 100%) !important;
+  border-color: rgba(255, 174, 162, 0.92) !important;
+  color: #ffe3dd !important;
+}
+
+/* Keep button position fixed on hover/press */
+.control-page button,
+.control-page .secondary-btn,
+.control-page .stats-range-btn,
+.control-page .settings-ai-link,
+.popup-link-btn {
+  transform: none !important;
+}
+
+.control-page button:hover,
+.control-page button:active,
+.control-page .secondary-btn:hover,
+.control-page .secondary-btn:active,
+.control-page .stats-range-btn:hover,
+.control-page .stats-range-btn:active,
+.control-page .settings-ai-link:hover,
+.control-page .settings-ai-link:active,
+.popup-link-btn:hover,
+.popup-link-btn:active {
+  transform: none !important;
+}
+
+/* Stable button sizing to avoid text/label jump */
+.control-page button,
+.control-page .secondary-btn,
+.control-page .settings-ai-link {
+  min-height: 42px;
+  line-height: 1.15;
+}
+
+/* Keep Save Settings aligned and single-line */
+.control-page.settings-page #save-settings {
+  width: 100%;
+  min-height: 42px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.control-page.settings-page .settings-preset-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.control-page.settings-page .settings-preset-grid #save-settings {
+  margin-top: 0 !important;
+}
+
+.control-page.settings-page .settings-presets #save-feedback {
+  margin-top: 10px;
+}
+

@@ -1,4 +1,5 @@
 const TICK_ALARM_NAME = "focusunlock-minute-tick";
+const USER_ID_STORAGE_KEY = "focusunlockUserId";
 const DEFAULTS = {
   settings: {
     workSites: ["github.com", "jira.com"],
@@ -14,7 +15,8 @@ const DEFAULTS = {
     activeUrl: "",
     currentSession: null,
     dailyFocusMinutes: 0,
-    dailyFocusDate: ""
+    dailyFocusDate: "",
+    lastTickAt: 0
   }
 };
 
@@ -73,9 +75,22 @@ async function getStorageSnapshot() {
   };
 }
 
+async function getOrCreateUserId() {
+  const data = await chrome.storage.local.get(USER_ID_STORAGE_KEY);
+  const existing = String(data?.[USER_ID_STORAGE_KEY] || "").trim();
+  if (existing) return existing;
+  const generated =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `focusunlock-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  await chrome.storage.local.set({ [USER_ID_STORAGE_KEY]: generated });
+  return generated;
+}
+
 async function initializeStorage() {
   const snapshot = await getStorageSnapshot();
   const state = ensureDailyBucket(snapshot.state);
+  await getOrCreateUserId();
   await chrome.storage.local.set({
     settings: snapshot.settings,
     state
@@ -99,13 +114,27 @@ async function getFocusedActiveTab() {
   return tab;
 }
 
+async function isUserActivelyUsingBrowser() {
+  if (!chrome.idle || typeof chrome.idle.queryState !== "function") {
+    return true;
+  }
+  try {
+    const state = await chrome.idle.queryState(60);
+    return state === "active";
+  } catch (error) {
+    return true;
+  }
+}
+
 async function postCompletedSession(session) {
   if (!session || session.durationMinutes <= 0) return;
   try {
+    const userId = await getOrCreateUserId();
     await fetch("http://localhost:3000/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        user_id: userId,
         site: session.site,
         duration_minutes: session.durationMinutes,
         timestamp: new Date(session.endedAt).toISOString()
@@ -166,8 +195,18 @@ async function updateActiveContextFromTab(tab) {
   const snapshot = await getStorageSnapshot();
   const settings = snapshot.settings;
   let state = { ...snapshot.state, ...patch };
+  const isActive = await isUserActivelyUsingBrowser();
 
   if (settings.allowAllWebsites) {
+    if (state.currentSession) {
+      state = await finalizeCurrentSession(state, Date.now());
+    }
+    await chrome.storage.local.set({ state });
+    await notifyAllTabsStateChanged();
+    return;
+  }
+
+  if (!isActive) {
     if (state.currentSession) {
       state = await finalizeCurrentSession(state, Date.now());
     }
@@ -213,18 +252,32 @@ async function tickFocusTimer() {
   const settings = snapshot.settings;
   let state = ensureDailyBucket(snapshot.state);
   const host = hostFromUrl(state.activeUrl);
+  const now = Date.now();
+  const isActive = await isUserActivelyUsingBrowser();
 
   if (settings.allowAllWebsites) {
     if (state.currentSession) {
-      await finalizeCurrentSession(state, Date.now());
+      await finalizeCurrentSession(state, now);
+    }
+    return;
+  }
+
+  if (!isActive) {
+    if (state.currentSession) {
+      state = await finalizeCurrentSession(state, now);
+      await notifyAllTabsStateChanged();
     }
     return;
   }
 
   if (!host || !hostInList(host, settings.workSites)) {
     if (state.currentSession) {
-      state = await finalizeCurrentSession(state, Date.now());
+      state = await finalizeCurrentSession(state, now);
     }
+    return;
+  }
+
+  if (Number(state.lastTickAt || 0) > 0 && now - Number(state.lastTickAt || 0) < 45000) {
     return;
   }
 
@@ -238,7 +291,7 @@ async function tickFocusTimer() {
       }
     : {
         site: host,
-        startedAt: Date.now(),
+        startedAt: now,
         accumulatedMinutes: 1
       };
 
@@ -247,7 +300,8 @@ async function tickFocusTimer() {
     earnedMinutes: nextEarnedMinutes,
     unlocked: unlocked || deriveUnlocked(state, settings),
     currentSession,
-    dailyFocusMinutes: nextDailyFocusMinutes
+    dailyFocusMinutes: nextDailyFocusMinutes,
+    lastTickAt: now
   };
 
   await chrome.storage.local.set({ state: nextState });
@@ -424,7 +478,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         ...state,
         earnedMinutes: 0,
         unlocked: false,
-        currentSession: null
+        currentSession: null,
+        lastTickAt: 0
       };
       await chrome.storage.local.set({ state: resetState });
       await refreshActiveContext();

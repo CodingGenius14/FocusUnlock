@@ -6,7 +6,8 @@
   "permissions": [
     "storage",
     "alarms",
-    "tabs"
+    "tabs",
+    "idle"
   ],
   "host_permissions": [
     "*://*/*",

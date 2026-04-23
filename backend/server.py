@@ -6,6 +6,7 @@ from urllib import error, request
 
 from fastapi import FastAPI
 from fastapi import HTTPException
+from fastapi import Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -13,6 +14,7 @@ from db import init_db, insert_session, list_sessions
 
 
 class SessionPayload(BaseModel):
+    user_id: str = Field(min_length=1, max_length=200)
     site: str
     duration_minutes: float
     timestamp: str
@@ -46,6 +48,95 @@ def normalize_domain(value: str) -> str:
     cleaned = value.strip().lower().replace("https://", "").replace("http://", "")
     cleaned = cleaned.split("/")[0].replace("www.", "")
     return cleaned
+
+
+THEME_SITE_PATTERNS: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
+    "coding": (
+        ("interview", "leetcode", "dsa", "algorithm", "code", "coding", "developer", "programming", "debug"),
+        (
+            "github.com",
+            "stackoverflow.com",
+            "leetcode.com",
+            "neetcode.io",
+            "hackerrank.com",
+            "codeforces.com",
+            "geeksforgeeks.org",
+        ),
+    ),
+    "writing": (
+        ("write", "writing", "essay", "report", "doc", "document"),
+        ("docs.google.com", "notion.so", "overleaf.com", "grammarly.com"),
+    ),
+    "research": (
+        ("research", "paper", "study", "read", "reading"),
+        ("scholar.google.com", "arxiv.org", "pubmed.ncbi.nlm.nih.gov", "wikipedia.org"),
+    ),
+    "design": (
+        ("design", "ui", "ux"),
+        ("figma.com", "dribbble.com", "behance.net"),
+    ),
+    "math": (
+        ("math", "calculus", "algebra", "statistics"),
+        ("khanacademy.org", "wolframalpha.com", "desmos.com"),
+    ),
+    "coursework": (
+        ("class", "assignment", "homework", "course"),
+        ("canvas.instructure.com", "coursera.org", "edx.org", "udemy.com"),
+    ),
+}
+
+DISTRACTION_DOMAINS = {
+    "chess.com",
+    "reddit.com",
+    "instagram.com",
+    "tiktok.com",
+    "facebook.com",
+    "x.com",
+    "twitter.com",
+    "youtube.com",
+    "netflix.com",
+    "twitch.tv",
+}
+
+DEFAULT_PRODUCTIVE_DOMAINS = ("notion.so", "docs.google.com", "github.com", "stackoverflow.com")
+
+
+def site_matches_pattern(site: str, pattern: str) -> bool:
+    return site == pattern or site.endswith(f".{pattern}")
+
+
+def relevant_domains_for_goal(goal: str, current_work_sites: list[str]) -> tuple[set[str], bool]:
+    goal_lower = goal.lower()
+    allowed = {normalize_domain(site) for site in current_work_sites if normalize_domain(site)}
+    matched_any_theme = False
+
+    for keywords, patterns in THEME_SITE_PATTERNS.values():
+        if any(keyword in goal_lower for keyword in keywords):
+            matched_any_theme = True
+            allowed.update(patterns)
+
+    if not matched_any_theme:
+        allowed.update(DEFAULT_PRODUCTIVE_DOMAINS)
+
+    return allowed, matched_any_theme
+
+
+def filter_relevant_sites(goal: str, current_work_sites: list[str], candidate_sites: list[str]) -> list[str]:
+    allowed_domains, matched_theme = relevant_domains_for_goal(goal, current_work_sites)
+    allowed_normalized = [normalize_domain(item) for item in allowed_domains]
+    filtered: list[str] = []
+
+    for raw_site in candidate_sites:
+        site = normalize_domain(raw_site)
+        if not site:
+            continue
+        if site in DISTRACTION_DOMAINS and matched_theme:
+            continue
+        if any(site_matches_pattern(site, allowed) for allowed in allowed_normalized):
+            if site not in filtered:
+                filtered.append(site)
+
+    return filtered
 
 
 def build_fallback_plan(goal: str, current_work_sites: list[str], daily_goal_minutes: int) -> dict:
@@ -147,6 +238,7 @@ Respond ONLY valid JSON with this exact shape:
 Rules:
 - Recommend 3 to 8 realistic domains.
 - Domains must be lowercase hostnames only (no protocol, no paths).
+- Keep recommendations tightly relevant to the user goal. Avoid entertainment/distraction sites unless explicitly requested.
 - time_plan minutes should sum close to daily goal minutes.
 - suggested_quota_minutes should be between 15 and 90.
 """
@@ -203,8 +295,13 @@ Rules:
     suggested_quota_minutes = int(parsed.get("suggested_quota_minutes", 30))
     suggested_quota_minutes = max(15, min(90, suggested_quota_minutes))
 
+    recommended_sites = filter_relevant_sites(goal, current_work_sites, recommended_sites)
+
     if not recommended_sites:
         raise HTTPException(status_code=502, detail="Groq response did not include valid site recommendations.")
+
+    allowed_set = set(recommended_sites)
+    time_plan = [item for item in time_plan if item["site"] in allowed_set]
 
     return {
         "recommended_sites": recommended_sites,
@@ -233,13 +330,20 @@ app.add_middleware(
 
 @app.post("/sessions")
 def create_session(payload: SessionPayload) -> dict:
-    row_id = insert_session(payload.site, payload.duration_minutes, payload.timestamp)
+    row_id = insert_session(
+        payload.user_id,
+        payload.site,
+        payload.duration_minutes,
+        payload.timestamp,
+    )
     return {"id": row_id, "ok": True}
 
 
 @app.get("/sessions")
-def get_sessions() -> list[dict]:
-    return list_sessions()
+def get_sessions(
+    user_id: str = Query(min_length=1, max_length=200),
+) -> list[dict]:
+    return list_sessions(user_id=user_id)
 
 
 @app.post("/ai/assist")

@@ -113,6 +113,9 @@ async function loadSettings() {
 async function saveSettings() {
   const feedback = document.getElementById("save-feedback");
   const saveButton = document.getElementById("save-settings");
+  if (saveButton && !saveButton.dataset.defaultLabel) {
+    saveButton.dataset.defaultLabel = saveButton.textContent || "Save Settings";
+  }
 
   const { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites } = getCurrentFormSettings();
 
@@ -146,7 +149,7 @@ async function saveSettings() {
   } finally {
     if (saveButton) {
       saveButton.disabled = false;
-      saveButton.textContent = "Save Settings";
+      saveButton.textContent = saveButton.dataset.defaultLabel || "Save Settings";
     }
   }
 }

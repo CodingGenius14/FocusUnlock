@@ -6,111 +6,123 @@
     <title>FocusUnlock Settings</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="page settings-page">
-    <main class="card wide settings-shell">
-      <header class="settings-header">
-        <h1>FocusUnlock Settings</h1>
-        <p>Configure the work-site allowlist. Every other website stays blocked until your focus quota is complete.</p>
-        <a class="secondary-btn settings-ai-link" href="ai.html" target="_blank" rel="noreferrer">Open AI Assistance</a>
-      </header>
-
-      <section class="settings-section">
-        <div class="settings-row">
-          <label for="work-sites">Work Sites</label>
-          <p class="field-help">One domain per line. These are the only sites accessible before your timer is complete.</p>
-          <textarea id="work-sites" rows="8" placeholder="github.com&#10;jira.com&#10;notion.so"></textarea>
+  <body class="page settings-page control-page">
+    <main class="control-shell">
+      <aside class="control-sidebar">
+        <div class="brand-block">
+          <p class="brand-title">FOCUS_CORE</p>
+          <p class="brand-subtitle">v2.0.4 · ACTIVE</p>
         </div>
-      </section>
+        <nav class="control-nav" aria-label="Control Center">
+          <a href="options.html" class="nav-item active">Settings</a>
+          <a href="ai.html" class="nav-item">AI Assistance</a>
+          <a href="stats.html" class="nav-item">Stats</a>
+        </nav>
+      </aside>
 
-      <section class="settings-section">
-        <div class="settings-row">
-          <label for="quota-minutes">Focus Quota (minutes)</label>
-          <p class="field-help">How many focused minutes are required before all other sites unlock.</p>
-          <input id="quota-minutes" type="number" min="1" />
-        </div>
-        <div class="settings-row">
-          <label for="daily-goal-minutes">Daily Goal (minutes)</label>
-          <p class="field-help">Used to track your target focus time for the current day.</p>
-          <input id="daily-goal-minutes" type="number" min="1" />
-        </div>
-      </section>
+      <section class="control-main">
+        <header class="control-topbar">
+          <p class="section-kicker">COMMAND_CENTER</p>
+          <h1>System Configuration</h1>
+          <p class="field-help">Refine your cognitive environment and align your focus protocol.</p>
+        </header>
 
-      <section class="settings-section">
-        <div class="settings-row">
-          <label for="allow-all-websites">Allow All Websites</label>
-          <p class="field-help">When ON, FocusUnlock pauses blocking and time tracking. When OFF, only your Work Sites are allowed until the quota is met.</p>
-          <div class="toggle-row">
-            <label class="switch" for="allow-all-websites">
-              <input id="allow-all-websites" type="checkbox" />
-              <span class="slider"></span>
-            </label>
-            <span id="allow-all-status" class="toggle-status">Off</span>
+        <section class="settings-section settings-insights">
+          <div class="settings-insights-grid">
+            <article class="insight-card">
+              <p class="insight-label">Configured Work Sites</p>
+              <p id="configured-sites-count" class="insight-value">0</p>
+            </article>
+            <article class="insight-card">
+              <p class="insight-label">Mode</p>
+              <p id="settings-mode-label" class="insight-value">STRICT_PROTOCOL</p>
+            </article>
+            <article class="insight-card">
+              <p class="insight-label">Unlock Progress</p>
+              <p id="quota-preview" class="insight-value">0 / 30 min</p>
+            </article>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="settings-section settings-insights">
-        <div class="settings-insights-grid">
-          <article class="insight-card">
-            <p class="insight-label">Configured Work Sites</p>
-            <p id="configured-sites-count" class="insight-value">0</p>
-          </article>
-          <article class="insight-card">
-            <p class="insight-label">Mode</p>
-            <p id="settings-mode-label" class="insight-value">Allowlist</p>
-          </article>
-          <article class="insight-card">
-            <p class="insight-label">Unlock Progress</p>
-            <p id="quota-preview" class="insight-value">0 / 30 min</p>
-          </article>
+        <div class="control-grid">
+          <section class="settings-section">
+            <div class="section-head-row">
+              <label for="work-sites">Work Sites</label>
+              <span class="field-chip">ONE_URL_PER_LINE</span>
+            </div>
+            <p class="field-help">Domains that bypass blocking during active focus sessions.</p>
+            <textarea id="work-sites" rows="10" placeholder="github.com&#10;stackoverflow.com&#10;notion.so"></textarea>
+          </section>
+
+          <section class="settings-section section-controls">
+            <div class="settings-row">
+              <label for="allow-all-websites">Allow All Websites</label>
+              <p class="field-help">Emergency bypass protocol for unrestricted browsing access.</p>
+              <div class="toggle-row">
+                <label class="switch" for="allow-all-websites">
+                  <input id="allow-all-websites" type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+                <span id="allow-all-status" class="toggle-status">Off</span>
+              </div>
+            </div>
+
+            <div class="settings-row">
+              <label for="quota-minutes">Focus Quota (minutes)</label>
+              <input id="quota-minutes" type="number" min="1" />
+            </div>
+
+            <div class="settings-row">
+              <label for="daily-goal-minutes">Daily Goal (minutes)</label>
+              <input id="daily-goal-minutes" type="number" min="1" />
+            </div>
+
+            <div class="settings-row">
+              <button id="reset-session" type="button" class="secondary-btn full-width">Reset Current Session</button>
+              <p id="session-feedback" class="save-feedback" aria-live="polite"></p>
+            </div>
+          </section>
         </div>
 
-        <div class="settings-utility-actions">
-          <button id="reset-session" type="button" class="secondary-btn">Reset Current Session</button>
-          <p id="session-feedback" class="save-feedback" aria-live="polite"></p>
-        </div>
-      </section>
-
-      <section class="settings-section settings-advanced">
-        <h2 class="settings-subheading">Focus Configuration Intelligence</h2>
-        <div class="settings-analytics-grid">
-          <article class="settings-analytics-card">
-            <p class="insight-label">Daily Pace Needed</p>
-            <p id="daily-pace-needed" class="insight-value">--</p>
-          </article>
-          <article class="settings-analytics-card">
-            <p class="insight-label">Sessions to Goal</p>
-            <p id="sessions-to-goal" class="insight-value">--</p>
-          </article>
-        </div>
-
-        <div class="settings-ratio-panel">
-          <div class="settings-ratio-top">
-            <span>Daily Goal to Quota Ratio</span>
+        <section class="settings-section settings-advanced">
+          <h2 class="settings-subheading">Focus Configuration Intelligence</h2>
+          <div class="engine-row">
+            <span>Optimization Engine Status</span>
             <span id="ratio-text">--</span>
           </div>
           <div class="settings-ratio-track">
             <div id="ratio-fill" class="settings-ratio-fill"></div>
           </div>
-        </div>
 
-        <ul id="settings-recommendations" class="settings-recommendations"></ul>
+          <div class="settings-analytics-grid">
+            <article class="settings-analytics-card">
+              <p class="insight-label">Daily Pace Needed</p>
+              <p id="daily-pace-needed" class="insight-value">--</p>
+            </article>
+            <article class="settings-analytics-card">
+              <p class="insight-label">Sessions to Goal</p>
+              <p id="sessions-to-goal" class="insight-value">--</p>
+            </article>
+            <article class="settings-analytics-card">
+              <p class="insight-label">AI Workbench</p>
+              <a class="secondary-btn settings-ai-link full-width" href="ai.html">Open AI Assistance</a>
+            </article>
+          </div>
+
+          <ul id="settings-recommendations" class="settings-recommendations"></ul>
+        </section>
+
+        <section class="settings-section settings-presets">
+          <h2 class="settings-subheading">Focus Presets</h2>
+          <div class="settings-preset-grid">
+            <button id="save-settings" type="button" class="go-deep-btn preset-btn">Save Settings</button>
+            <button type="button" class="secondary-btn preset-btn" data-preset="deep">Deep Work / Dev</button>
+            <button type="button" class="secondary-btn preset-btn" data-preset="balanced">Balanced Flow</button>
+            <button type="button" class="secondary-btn preset-btn" data-preset="light">Light Session</button>
+          </div>
+          <p id="save-feedback" class="save-feedback" aria-live="polite"></p>
+        </section>
       </section>
-
-      <section class="settings-section settings-presets">
-        <h2 class="settings-subheading">Focus Presets</h2>
-        <p class="field-help">Apply a profile instantly, then save if you want to keep it.</p>
-        <div class="settings-preset-grid">
-          <button type="button" class="secondary-btn preset-btn" data-preset="deep">Deep Work</button>
-          <button type="button" class="secondary-btn preset-btn" data-preset="balanced">Balanced</button>
-          <button type="button" class="secondary-btn preset-btn" data-preset="light">Light</button>
-        </div>
-      </section>
-
-      <footer class="settings-actions">
-        <button id="save-settings" type="button">Save Settings</button>
-        <p id="save-feedback" class="save-feedback" aria-live="polite"></p>
-      </footer>
     </main>
     <script src="options.js"></script>
   </body>

@@ -4,6 +4,7 @@ function toTenths(minutesValue) {
 
 let allSessionsCache = [];
 let activeRange = "7d";
+const USER_ID_STORAGE_KEY = "focusunlockUserId";
 
 function formatTenths(tenths) {
   return tenths % 10 === 0 ? String(tenths / 10) : (tenths / 10).toFixed(1);
@@ -62,6 +63,19 @@ function getRangeLabel(range) {
   if (range === "all") return "all time";
   return "last 7 days";
 }
+
+async function getOrCreateUserId() {
+  const result = await chrome.storage.local.get(USER_ID_STORAGE_KEY);
+  const existing = String(result?.[USER_ID_STORAGE_KEY] || "").trim();
+  if (existing) return existing;
+  const generated =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `focusunlock-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  await chrome.storage.local.set({ [USER_ID_STORAGE_KEY]: generated });
+  return generated;
+}
+
 
 function renderDistributionChart(target, items, totalTenths, accentClass, emptyLabel) {
   if (!target) return;
@@ -466,7 +480,8 @@ async function loadSessions() {
   if (!status) return;
 
   try {
-    const response = await fetch("http://localhost:3000/sessions");
+    const userId = await getOrCreateUserId();
+    const response = await fetch(`http://localhost:3000/sessions?user_id=${encodeURIComponent(userId)}`);
     if (!response.ok) throw new Error("Failed to load sessions");
     const sessions = await response.json();
     allSessionsCache = Array.isArray(sessions) ? sessions : [];

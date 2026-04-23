@@ -6,82 +6,97 @@
     <title>FocusUnlock Stats</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="page stats-page">
-    <main class="card wide stats-shell">
-      <header class="stats-header">
-        <h1>Focus Time by Website</h1>
-        <p>Review how many focused minutes you have spent on each work site.</p>
-      </header>
-
-      <section class="stats-range-filter">
-        <p class="stats-range-label">Time Range</p>
-        <div class="stats-range-buttons">
-          <button type="button" class="stats-range-btn" data-range="today">Today</button>
-          <button type="button" class="stats-range-btn active" data-range="7d">7D</button>
-          <button type="button" class="stats-range-btn" data-range="30d">30D</button>
-          <button type="button" class="stats-range-btn" data-range="all">All</button>
+  <body class="page stats-page control-page">
+    <main class="control-shell">
+      <aside class="control-sidebar">
+        <div class="brand-block">
+          <p class="brand-title">FOCUS_CORE</p>
+          <p class="brand-subtitle">v2.0.4 · ACTIVE</p>
         </div>
+        <nav class="control-nav" aria-label="Control Center">
+          <a href="options.html" class="nav-item">Settings</a>
+          <a href="ai.html" class="nav-item">AI Assistance</a>
+          <a href="stats.html" class="nav-item active">Stats</a>
+        </nav>
+      </aside>
+
+      <section class="control-main">
+        <header class="control-topbar stats-header">
+          <p class="section-kicker">ANALYTICS_CORE</p>
+          <h1>Focus Intelligence</h1>
+          <p>Track focus distribution, trend quality, and session behavior by range.</p>
+        </header>
+
+        <section class="stats-range-filter">
+          <p class="stats-range-label">Time Range</p>
+          <div class="stats-range-buttons">
+            <button type="button" class="stats-range-btn" data-range="today">Today</button>
+            <button type="button" class="stats-range-btn active" data-range="7d">7D</button>
+            <button type="button" class="stats-range-btn" data-range="30d">30D</button>
+            <button type="button" class="stats-range-btn" data-range="all">All</button>
+          </div>
+        </section>
+
+        <section class="stats-overview">
+          <article class="stats-tile">
+            <p class="stats-tile-label">Tracked Websites</p>
+            <p id="stats-total-sites" class="stats-tile-value">--</p>
+          </article>
+          <article class="stats-tile">
+            <p class="stats-tile-label">Completed Sessions</p>
+            <p id="stats-completed-sessions" class="stats-tile-value">--</p>
+          </article>
+          <article class="stats-tile">
+            <p class="stats-tile-label">Tracked Minutes</p>
+            <p id="stats-tracked-total-minutes" class="stats-tile-value">--</p>
+          </article>
+        </section>
+
+        <p id="stats-status" class="stats-status">Loading sessions...</p>
+
+        <section class="stats-analytics-grid">
+          <article class="stats-panel analytics-panel">
+            <h2>Website Distribution</h2>
+            <p class="stats-panel-subtitle">Share of focused time by website.</p>
+            <div id="analytics-website-chart" class="analytics-chart"></div>
+          </article>
+
+          <article class="stats-panel analytics-panel">
+            <h2>Category Distribution</h2>
+            <p class="stats-panel-subtitle">Share of focused time by category.</p>
+            <div id="analytics-category-chart" class="analytics-chart"></div>
+          </article>
+
+          <article class="stats-panel analytics-panel wide">
+            <h2>Recent Daily Trend</h2>
+            <p class="stats-panel-subtitle">Focused minutes over time.</p>
+            <div id="analytics-trend-chart" class="analytics-chart trend"></div>
+          </article>
+
+          <article class="stats-panel analytics-panel">
+            <h2>Hourly Focus Heatmap</h2>
+            <p class="stats-panel-subtitle">Productive hours in the selected range.</p>
+            <div id="analytics-hourly-heatmap" class="analytics-chart"></div>
+          </article>
+
+          <article class="stats-panel analytics-panel">
+            <h2>Weekday Performance</h2>
+            <p class="stats-panel-subtitle">Focused minutes by weekday.</p>
+            <div id="analytics-weekday-performance" class="analytics-chart"></div>
+          </article>
+
+          <article class="stats-panel analytics-panel wide">
+            <h2>Session Length Distribution</h2>
+            <p class="stats-panel-subtitle">How your sessions are distributed by duration.</p>
+            <div id="analytics-session-length" class="analytics-chart"></div>
+          </article>
+
+          <article class="stats-panel analytics-panel wide">
+            <h2>Useful Insights</h2>
+            <div id="analytics-insights" class="analytics-insights-grid"></div>
+          </article>
+        </section>
       </section>
-
-      <section class="stats-overview">
-        <article class="stats-tile">
-          <p class="stats-tile-label">Tracked Websites</p>
-          <p id="stats-total-sites" class="stats-tile-value">--</p>
-        </article>
-        <article class="stats-tile">
-          <p class="stats-tile-label">Completed Sessions</p>
-          <p id="stats-completed-sessions" class="stats-tile-value">--</p>
-        </article>
-        <article class="stats-tile">
-          <p class="stats-tile-label">Tracked Minutes (All Websites)</p>
-          <p id="stats-tracked-total-minutes" class="stats-tile-value">--</p>
-        </article>
-      </section>
-
-      <section class="stats-analytics-grid">
-        <article class="stats-panel analytics-panel">
-          <h2>Website Distribution</h2>
-          <p class="stats-panel-subtitle">Share of focused time by website.</p>
-          <div id="analytics-website-chart" class="analytics-chart"></div>
-        </article>
-
-        <article class="stats-panel analytics-panel">
-          <h2>Category Distribution</h2>
-          <p class="stats-panel-subtitle">Share of focused time by category.</p>
-          <div id="analytics-category-chart" class="analytics-chart"></div>
-        </article>
-
-        <article class="stats-panel analytics-panel wide">
-          <h2>Recent Daily Trend</h2>
-          <p class="stats-panel-subtitle">Focused minutes over the last 7 days.</p>
-          <div id="analytics-trend-chart" class="analytics-chart trend"></div>
-        </article>
-
-        <article class="stats-panel analytics-panel">
-          <h2>Hourly Focus Heatmap</h2>
-          <p class="stats-panel-subtitle">Which hours of the day are most productive.</p>
-          <div id="analytics-hourly-heatmap" class="analytics-chart"></div>
-        </article>
-
-        <article class="stats-panel analytics-panel">
-          <h2>Weekday Performance</h2>
-          <p class="stats-panel-subtitle">Focused minutes by weekday.</p>
-          <div id="analytics-weekday-performance" class="analytics-chart"></div>
-        </article>
-
-        <article class="stats-panel analytics-panel wide">
-          <h2>Session Length Distribution</h2>
-          <p class="stats-panel-subtitle">How your completed sessions are distributed by length.</p>
-          <div id="analytics-session-length" class="analytics-chart"></div>
-        </article>
-
-        <article class="stats-panel analytics-panel wide">
-          <h2>Useful Insights</h2>
-          <div id="analytics-insights" class="analytics-insights-grid"></div>
-        </article>
-      </section>
-
-      <p id="stats-status" class="stats-status">Loading sessions...</p>
     </main>
     <script src="stats.js"></script>
   </body>
