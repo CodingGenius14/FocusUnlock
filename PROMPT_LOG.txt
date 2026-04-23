@@ -1,0 +1,35 @@
+Main Prompts:
+
+1.) You will help me build a chrome extension called FocusUnlock that helps a user stay focused on the websites they need to be on and prevents them from going to 
+    websites that are not included as a work site. Every website besides work sites should be blocked for the user until they finish a quota of work time. Confirm you
+    have understood the project goal.
+    
+
+2.) Build out the settings configuration page for the chrome extension. This page should allow the user to input the sites that are worksites, their daily goal, and
+    quota time. It should also have default settings that the user can choose from for their quota and daily goal.
+    
+
+3.) On the settings page allow the user to toggle a button that overrides everything and allows the user to go to whatever website they want.
+
+
+4.) Help walk me through creating the db.py file to track time spent on websites for each user
+
+
+5.) Create an analytics page that tracks how much time a user is spending on their work sites, updates progress made to their goals and provides analytics such as 
+    time spent on websites, total time spent on categories, a graph of time spent each day, a weekday performance, and any important analytics you can think of
+
+
+6.) Build out an AI assistant page that allows a user to tell the ai their plan and the ai recommends websites the user should use and then can automatically push those
+    websites to the Work sites on the settings page
+
+
+7.) If the api isn't working create a fall black plan that still recommends users sites to visit
+
+
+8.) Use these google stitch images to revamp the UI for each page
+
+
+9.) Make sure the chrome icon shows the progress being made to goals
+
+
+10.) When a user finishes a session it should unlock every website and when a user starts a new session it locks all websites that aren't listed as a work site
