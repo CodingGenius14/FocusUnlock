@@ -11,7 +11,7 @@
   ],
   "host_permissions": [
     "*://*/*",
-    "http://localhost:3000/*"
+    "https://focusunlock.onrender.com/*"
   ],
   "background": {
     "service_worker": "background.js"

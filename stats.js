@@ -480,8 +480,17 @@ async function loadSessions() {
   if (!status) return;
 
   try {
+    // Ensure in-progress focused time is posted before loading analytics.
+    try {
+      await chrome.runtime.sendMessage({ type: "FLUSH_CURRENT_SESSION" });
+    } catch (error) {
+      // If flush fails, continue and load whatever is already persisted.
+    }
+
     const userId = await getOrCreateUserId();
-    const response = await fetch(`http://localhost:3000/sessions?user_id=${encodeURIComponent(userId)}`);
+    const response = await fetch(
+      `https://focusunlock.onrender.com/sessions?user_id=${encodeURIComponent(userId)}`
+    );
     if (!response.ok) throw new Error("Failed to load sessions");
     const sessions = await response.json();
     allSessionsCache = Array.isArray(sessions) ? sessions : [];

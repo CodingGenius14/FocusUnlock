@@ -106,7 +106,7 @@ async function generatePlan() {
     const currentWorkSites = sessionState?.settings?.workSites || [];
     const dailyGoalMinutes = Number(sessionState?.settings?.dailyGoalMinutes || 120);
 
-    const response = await fetch("http://localhost:3000/ai/assist", {
+    const response = await fetch("https://focusunlock.onrender.com/ai/assist", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -130,7 +130,7 @@ async function postCompletedSession(session) {
   if (!session || session.durationMinutes <= 0) return;
   try {
     const userId = await getOrCreateUserId();
-    await fetch("http://localhost:3000/sessions", {
+    await fetch("https://focusunlock.onrender.com/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -483,6 +483,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       };
       await chrome.storage.local.set({ state: resetState });
       await refreshActiveContext();
+      await notifyAllTabsStateChanged();
+      sendResponse({ ok: true });
+      return;
+    }
+
+    if (message?.type === "FLUSH_CURRENT_SESSION") {
+      const snapshot = await getStorageSnapshot();
+      const state = ensureDailyBucket(snapshot.state);
+      const nextState = await finalizeCurrentSession(state, Date.now());
+      await chrome.storage.local.set({ state: nextState });
       await notifyAllTabsStateChanged();
       sendResponse({ ok: true });
       return;
