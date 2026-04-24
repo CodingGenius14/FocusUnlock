@@ -5,6 +5,7 @@ function toTenths(minutesValue) {
 let allSessionsCache = [];
 let activeRange = "7d";
 const USER_ID_STORAGE_KEY = "focusunlockUserId";
+let quotaMinutesCache = 30;
 
 function formatTenths(tenths) {
   return tenths % 10 === 0 ? String(tenths / 10) : (tenths / 10).toFixed(1);
@@ -447,8 +448,11 @@ function renderRange() {
       .sort((a, b) => b.tenths - a.tenths);
     const totalTrackedTenths = sites.reduce((sum, siteSummary) => sum + siteSummary.tenths, 0);
 
+  const quotaTenths = Math.max(1, Math.round(Number(quotaMinutesCache || 30) * 10));
+  const completedQuotaSessions = Math.floor(totalTrackedTenths / quotaTenths);
+
   totalSites.textContent = String(sites.length);
-  completedSessions.textContent = String(sessions.length);
+  completedSessions.textContent = String(completedQuotaSessions);
   trackedTotalMinutes.textContent = formatTenths(totalTrackedTenths);
   status.textContent = `${sites.length} website(s) tracked in ${getRangeLabel(activeRange)}`;
   status.className = "stats-status";
@@ -480,6 +484,13 @@ async function loadSessions() {
   if (!status) return;
 
   try {
+    try {
+      const snapshot = await chrome.runtime.sendMessage({ type: "GET_SESSION_STATE" });
+      quotaMinutesCache = Math.max(1, Number(snapshot?.settings?.quotaMinutes || 30));
+    } catch (error) {
+      quotaMinutesCache = 30;
+    }
+
     // Ensure in-progress focused time is posted before loading analytics.
     try {
       await chrome.runtime.sendMessage({ type: "FLUSH_CURRENT_SESSION" });
