@@ -78,11 +78,16 @@ function getCurrentFormSettings() {
   const quotaInput = document.getElementById("quota-minutes");
   const dailyGoalInput = document.getElementById("daily-goal-minutes");
   const allowAllInput = document.getElementById("allow-all-websites");
+  const backendModeInput = document.getElementById("backend-mode");
   const workSites = parseSites(workSitesInput?.value || "");
   const quotaMinutes = Math.max(1, Number(quotaInput?.value || 30));
   const dailyGoalMinutes = Math.max(1, Number(dailyGoalInput?.value || 120));
   const allowAllWebsites = Boolean(allowAllInput?.checked);
-  return { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites };
+  const backendBaseUrl =
+    backendModeInput?.value === "render"
+      ? "https://focusunlock.onrender.com"
+      : "http://127.0.0.1:3000";
+  return { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites, backendBaseUrl };
 }
 
 async function loadSettings() {
@@ -94,11 +99,16 @@ async function loadSettings() {
   const quotaInput = document.getElementById("quota-minutes");
   const dailyGoalInput = document.getElementById("daily-goal-minutes");
   const allowAllInput = document.getElementById("allow-all-websites");
+  const backendModeInput = document.getElementById("backend-mode");
 
   if (workSitesInput) workSitesInput.value = formatSites(settings.workSites || []);
   if (quotaInput) quotaInput.value = Number(settings.quotaMinutes ?? 30);
   if (dailyGoalInput) dailyGoalInput.value = Number(settings.dailyGoalMinutes ?? 120);
   if (allowAllInput) allowAllInput.checked = Boolean(settings.allowAllWebsites);
+  if (backendModeInput) {
+    const backendBaseUrl = String(settings.backendBaseUrl || "http://127.0.0.1:3000");
+    backendModeInput.value = backendBaseUrl.includes("onrender.com") ? "render" : "local";
+  }
 
   uiState.earnedMinutes = Number(state.earnedMinutes || 0);
   uiState.unlocked = Boolean(state.unlocked);
@@ -117,7 +127,8 @@ async function saveSettings() {
     saveButton.dataset.defaultLabel = saveButton.textContent || "Save Settings";
   }
 
-  const { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites } = getCurrentFormSettings();
+  const { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites, backendBaseUrl } =
+    getCurrentFormSettings();
 
   if (saveButton) {
     saveButton.disabled = true;
@@ -131,7 +142,7 @@ async function saveSettings() {
   try {
     await chrome.runtime.sendMessage({
       type: "SAVE_SETTINGS",
-      settings: { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites }
+      settings: { workSites, quotaMinutes, dailyGoalMinutes, allowAllWebsites, backendBaseUrl }
     });
     updateInsights(workSites, quotaMinutes, allowAllWebsites);
 
@@ -205,6 +216,12 @@ document.getElementById("daily-goal-minutes")?.addEventListener("input", () => {
 document.getElementById("allow-all-websites")?.addEventListener("change", () => {
   const { workSites, quotaMinutes, allowAllWebsites } = getCurrentFormSettings();
   updateInsights(workSites, quotaMinutes, allowAllWebsites);
+});
+document.getElementById("backend-mode")?.addEventListener("change", () => {
+  const saveFeedback = document.getElementById("save-feedback");
+  if (saveFeedback) {
+    saveFeedback.textContent = "Backend mode changed. Click Save Settings to apply.";
+  }
 });
 document.querySelectorAll(".preset-btn").forEach((button) => {
   button.addEventListener("click", () => {

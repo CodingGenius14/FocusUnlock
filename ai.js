@@ -105,8 +105,12 @@ async function generatePlan() {
     const sessionState = await chrome.runtime.sendMessage({ type: "GET_SESSION_STATE" });
     const currentWorkSites = sessionState?.settings?.workSites || [];
     const dailyGoalMinutes = Number(sessionState?.settings?.dailyGoalMinutes || 120);
+    const backendBaseUrl = String(sessionState?.settings?.backendBaseUrl || "http://127.0.0.1:3000").replace(
+      /\/+$/,
+      ""
+    );
 
-    const response = await fetch("https://focusunlock.onrender.com/ai/assist", {
+    const response = await fetch(`${backendBaseUrl}/ai/assist`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

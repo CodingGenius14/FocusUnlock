@@ -1,15 +1,18 @@
 const TICK_ALARM_NAME = "focusunlock-minute-tick";
 const USER_ID_STORAGE_KEY = "focusunlockUserId";
+const LOCAL_BACKEND_BASE_URL = "http://127.0.0.1:3000";
 const DEFAULTS = {
   settings: {
     workSites: ["github.com", "jira.com"],
     quotaMinutes: 30,
     allowAllWebsites: false,
-    dailyGoalMinutes: 120
+    dailyGoalMinutes: 120,
+    backendBaseUrl: LOCAL_BACKEND_BASE_URL
   },
   state: {
     earnedMinutes: 0,
     unlocked: false,
+    completedSessionEvents: [],
     activeWindowId: null,
     activeTabId: null,
     activeUrl: "",
@@ -41,6 +44,12 @@ function hostMatchesSite(host, site) {
 
 function hostInList(host, sites) {
   return sites.some((site) => hostMatchesSite(host, normalizeSite(site)));
+}
+
+function normalizeBackendBaseUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return LOCAL_BACKEND_BASE_URL;
+  return raw.replace(/\/+$/, "");
 }
 
 function deriveUnlocked(state, settings) {
@@ -130,7 +139,9 @@ async function postCompletedSession(session) {
   if (!session || session.durationMinutes <= 0) return;
   try {
     const userId = await getOrCreateUserId();
-    await fetch("https://focusunlock.onrender.com/sessions", {
+    const snapshot = await getStorageSnapshot();
+    const backendBaseUrl = normalizeBackendBaseUrl(snapshot.settings.backendBaseUrl);
+    await fetch(`${backendBaseUrl}/sessions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -282,7 +293,9 @@ async function tickFocusTimer() {
   }
 
   const nextEarnedMinutes = Number(state.earnedMinutes || 0) + 1;
-  const unlocked = nextEarnedMinutes >= Number(settings.quotaMinutes || 0);
+  const quotaMinutes = Math.max(1, Number(settings.quotaMinutes || 0));
+  const reachedQuotaThisTick = nextEarnedMinutes >= quotaMinutes;
+  const unlocked = reachedQuotaThisTick || Boolean(state.unlocked);
   const nextDailyFocusMinutes = Number(state.dailyFocusMinutes || 0) + 1;
   const currentSession = state.currentSession
     ? {
@@ -297,8 +310,16 @@ async function tickFocusTimer() {
 
   const nextState = {
     ...state,
-    earnedMinutes: nextEarnedMinutes,
-    unlocked: unlocked || deriveUnlocked(state, settings),
+    earnedMinutes: reachedQuotaThisTick ? 0 : nextEarnedMinutes,
+    unlocked,
+    completedSessionEvents: reachedQuotaThisTick
+      ? [
+          ...(Array.isArray(state.completedSessionEvents) ? state.completedSessionEvents : []),
+          { timestamp: new Date(now).toISOString(), quotaMinutes }
+        ]
+      : Array.isArray(state.completedSessionEvents)
+        ? state.completedSessionEvents
+        : [],
     currentSession,
     dailyFocusMinutes: nextDailyFocusMinutes,
     lastTickAt: now
@@ -449,6 +470,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
               currentSettings.dailyGoalMinutes ??
               DEFAULTS.settings.dailyGoalMinutes
           )
+        ),
+        backendBaseUrl: normalizeBackendBaseUrl(
+          incoming.backendBaseUrl ?? currentSettings.backendBaseUrl ?? DEFAULTS.settings.backendBaseUrl
         )
       };
       const currentState = ensureDailyBucket(snapshot.state);

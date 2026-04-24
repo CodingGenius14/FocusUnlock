@@ -53,15 +53,16 @@ It provides rich analytics based on time spent on work sites, including:
 
 ## Backend Notes (Important)
 
-The extension is currently configured to call the deployed backend:
+This project is configured for local backend usage:
 
-- `https://focusunlock.onrender.com`
+- `http://127.0.0.1:3000`
 
 This is used by:
 
 - Session logging
 - Stats page data
 - AI Assistance recommendations
+
 
 ## Secrets Handling
 
@@ -70,7 +71,7 @@ This is used by:
 - The backend loads secrets from `backend/.env` at startup.
 - If a key is missing or provider is unavailable, AI falls back to a local smart plan.
 
-## Running Backend Locally (Optional, for backend development)
+## Running Backend Locally (Required for local mode)
 
 From the repo root:
 
@@ -80,14 +81,14 @@ python -m pip install -r requirements.txt
 python -m uvicorn server:app --reload --host 127.0.0.1 --port 3000
 ```
 
-To make the extension use local backend instead of Render, update:
+If you want the AI Assistance via the Groq api then:
+- create backend/.env
+- GROQ_API_KEY=their_key_here
 
-- `background.js` API URL
-- `stats.js` API URL
-- `ai.js` API URL
-- `manifest.json` `host_permissions`
+The extension will still work fine without the backend/.env and will resort
+to the default suggestions instead of AI suggestions
 
-Then reload the extension in `chrome://extensions`.
+Then load/reload the extension in `chrome://extensions`.
 
 ## Notes on Data Isolation
 

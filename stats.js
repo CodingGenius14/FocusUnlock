@@ -6,6 +6,8 @@ let allSessionsCache = [];
 let activeRange = "7d";
 const USER_ID_STORAGE_KEY = "focusunlockUserId";
 let quotaMinutesCache = 30;
+let backendBaseUrlCache = "http://127.0.0.1:3000";
+let completedSessionEventsCache = [];
 
 function formatTenths(tenths) {
   return tenths % 10 === 0 ? String(tenths / 10) : (tenths / 10).toFixed(1);
@@ -56,6 +58,24 @@ function filterSessionsByRange(sessions, range) {
   start.setDate(today.getDate() - (dayCount - 1));
 
   return sessions.filter((session) => new Date(session.timestamp) >= start);
+}
+
+function filterCompletedEventsByRange(events, range) {
+  if (!Array.isArray(events)) return [];
+  if (range === "all") return events;
+
+  const today = startOfDay(new Date());
+  let dayCount = 7;
+  if (range === "today") dayCount = 1;
+  if (range === "30d") dayCount = 30;
+  const start = new Date(today);
+  start.setDate(today.getDate() - (dayCount - 1));
+
+  return events.filter((event) => {
+    const timestamp = event?.timestamp;
+    if (!timestamp) return false;
+    return new Date(timestamp) >= start;
+  });
 }
 
 function getRangeLabel(range) {
@@ -173,10 +193,10 @@ function renderWeekdayPerformance(target, sessions) {
   target.innerHTML = rows;
 }
 
-function renderSessionLengthDistribution(target, sessions) {
+function renderSessionLengthDistribution(target, completedEvents) {
   if (!target) return;
-  if (!sessions.length) {
-    target.innerHTML = `<div class="analytics-empty">No session length data yet.</div>`;
+  if (!completedEvents.length) {
+    target.innerHTML = `<div class="analytics-empty">No completed session data yet.</div>`;
     return;
   }
 
@@ -188,8 +208,8 @@ function renderSessionLengthDistribution(target, sessions) {
     { label: "60+ min", count: 0, min: 60, max: Infinity }
   ];
 
-  sessions.forEach((session) => {
-    const minutes = Number(session.duration_minutes || 0);
+  completedEvents.forEach((event) => {
+    const minutes = Math.max(1, Number(event?.quotaMinutes || quotaMinutesCache || 30));
     const bucket = buckets.find((b) => minutes >= b.min && minutes < b.max);
     if (bucket) bucket.count += 1;
   });
@@ -305,7 +325,7 @@ function renderTrendChart(target, sessions, range) {
   `;
 }
 
-function renderInsights(target, sessions, sites, categories) {
+function renderInsights(target, sessions, sites, categories, completedSessionsCount) {
   if (!target) return;
   if (!sessions.length) {
     target.innerHTML = `<div class="analytics-empty">No insights yet.</div>`;
@@ -314,9 +334,9 @@ function renderInsights(target, sessions, sites, categories) {
 
   const topSite = sites[0];
   const topCategory = categories[0];
-  const avgTenths = Math.round(
-    sessions.reduce((sum, session) => sum + toTenths(session.duration_minutes), 0) / sessions.length
-  );
+  const totalTrackedTenths = sites.reduce((sum, siteSummary) => sum + Number(siteSummary.tenths || 0), 0);
+  const avgTenths =
+    completedSessionsCount > 0 ? Math.round(totalTrackedTenths / completedSessionsCount) : 0;
 
   const byDay = new Map();
   sessions.forEach((session) => {
@@ -342,7 +362,7 @@ function renderInsights(target, sessions, sites, categories) {
     <article class="insight-card">
       <p class="insight-card-label">Average Session</p>
       <p class="insight-card-value">${formatTenths(avgTenths)} min</p>
-      <p class="insight-card-meta">${sessions.length} completed sessions</p>
+      <p class="insight-card-meta">${completedSessionsCount} completed sessions</p>
     </article>
     <article class="insight-card">
       <p class="insight-card-label">Most Focused Day</p>
@@ -403,6 +423,7 @@ function renderRange() {
   }
 
   const sessions = filterSessionsByRange(allSessionsCache, activeRange);
+  const completedEvents = filterCompletedEventsByRange(completedSessionEventsCache, activeRange);
   websiteChart.innerHTML = "";
   categoryChart.innerHTML = "";
   trendChart.innerHTML = "";
@@ -416,7 +437,7 @@ function renderRange() {
 
   if (!sessions.length) {
     totalSites.textContent = "0";
-    completedSessions.textContent = "0";
+    completedSessions.textContent = String(completedEvents.length);
     trackedTotalMinutes.textContent = "0";
     status.textContent = `No focus time saved for ${getRangeLabel(activeRange)}.`;
     status.className = "stats-status warning";
@@ -425,8 +446,8 @@ function renderRange() {
     renderTrendChart(trendChart, [], activeRange);
     renderHourlyHeatmap(hourlyHeatmap, []);
     renderWeekdayPerformance(weekdayPerformance, []);
-    renderSessionLengthDistribution(sessionLength, []);
-    renderInsights(insightsList, [], [], []);
+    renderSessionLengthDistribution(sessionLength, completedEvents);
+    renderInsights(insightsList, [], [], [], completedEvents.length);
     return;
   }
 
@@ -448,11 +469,8 @@ function renderRange() {
       .sort((a, b) => b.tenths - a.tenths);
     const totalTrackedTenths = sites.reduce((sum, siteSummary) => sum + siteSummary.tenths, 0);
 
-  const quotaTenths = Math.max(1, Math.round(Number(quotaMinutesCache || 30) * 10));
-  const completedQuotaSessions = Math.floor(totalTrackedTenths / quotaTenths);
-
   totalSites.textContent = String(sites.length);
-  completedSessions.textContent = String(completedQuotaSessions);
+  completedSessions.textContent = String(completedEvents.length);
   trackedTotalMinutes.textContent = formatTenths(totalTrackedTenths);
   status.textContent = `${sites.length} website(s) tracked in ${getRangeLabel(activeRange)}`;
   status.className = "stats-status";
@@ -474,8 +492,8 @@ function renderRange() {
   renderTrendChart(trendChart, sessions, activeRange);
   renderHourlyHeatmap(hourlyHeatmap, sessions);
   renderWeekdayPerformance(weekdayPerformance, sessions);
-  renderSessionLengthDistribution(sessionLength, sessions);
-  renderInsights(insightsList, sessions, sites, categories);
+  renderSessionLengthDistribution(sessionLength, completedEvents);
+  renderInsights(insightsList, sessions, sites, categories, completedEvents.length);
 
 }
 
@@ -487,8 +505,14 @@ async function loadSessions() {
     try {
       const snapshot = await chrome.runtime.sendMessage({ type: "GET_SESSION_STATE" });
       quotaMinutesCache = Math.max(1, Number(snapshot?.settings?.quotaMinutes || 30));
+      backendBaseUrlCache = String(snapshot?.settings?.backendBaseUrl || "http://127.0.0.1:3000").replace(/\/+$/, "");
+      completedSessionEventsCache = Array.isArray(snapshot?.state?.completedSessionEvents)
+        ? snapshot.state.completedSessionEvents
+        : [];
     } catch (error) {
       quotaMinutesCache = 30;
+      backendBaseUrlCache = "http://127.0.0.1:3000";
+      completedSessionEventsCache = [];
     }
 
     // Ensure in-progress focused time is posted before loading analytics.
@@ -500,7 +524,7 @@ async function loadSessions() {
 
     const userId = await getOrCreateUserId();
     const response = await fetch(
-      `https://focusunlock.onrender.com/sessions?user_id=${encodeURIComponent(userId)}`
+      `${backendBaseUrlCache}/sessions?user_id=${encodeURIComponent(userId)}`
     );
     if (!response.ok) throw new Error("Failed to load sessions");
     const sessions = await response.json();
