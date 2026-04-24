@@ -1,14 +1,14 @@
 # FocusUnlock
 
 FocusUnlock is a Chrome extension that helps you stay productive by only allowing your configured work sites until you earn enough focus time.  
-It includes a backend API for session storage and AI-assisted planning.
+It includes a fastAPI backend API for session storage
 
 ## What This Project Does
 
 - Tracks focused time spent on allowed work sites
 - Blocks non-work websites until your focus quota is met
 - Stores per-user session data for analytics
-- Generates AI work-site recommendations and time plans based on your goal
+- Allows users to get AI recommendations on sites to work on
 
 ## How To Use It
 
@@ -20,7 +20,7 @@ It includes a backend API for session storage and AI-assisted planning.
 3. Focus time accumulates automatically.
 4. Once quota is reached, blocked sites unlock.
 5. Use:
-   - **AI Assistance** to generate a focus plan
+   - **AI Assistance** to generate which sites they should work on
    - **Stats** to review your focus analytics
 
 ## Feature I Am Most Proud Of
